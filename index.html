@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Diet Advisor | Personalized Nutrition for Everyone</title>
+    <meta name="description"
+        content="Personalized dietary guidance based on age, gender, height, weight, activity level, and health conditions. Start your health journey today.">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+
+    <!-- Lucide Icons (CDN) -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <!-- Main Style -->
+    <link rel="stylesheet" href="./styles/main.css">
+</head>
+
+<body>
+    <!-- Floating Fruit/Veg Icons Background -->
+    <div style="position: fixed; inset: 0; z-index: -1; pointer-events: none; opacity: 0.5; overflow: hidden;">
+        <!-- Floating Salad Bowls -->
+        <div class="floating-icon" style="top: 10%; left: 5%; font-size: 6rem; opacity: 0.6; animation-delay: 0s;">🥗
+        </div>
+        <div class="floating-icon reverse"
+            style="bottom: 10%; right: 5%; font-size: 7rem; opacity: 0.5; animation-delay: 1s;">🥗</div>
+
+        <!-- Smaller Fruits/Veg -->
+        <div class="floating-icon reverse" style="top: 15%; right: 20%; font-size: 4rem; animation-delay: 2s;">🍎</div>
+        <div class="floating-icon" style="bottom: 30%; left: 15%; font-size: 5rem; animation-delay: 1.5s;">🥕</div>
+        <div class="floating-icon reverse" style="top: 40%; left: 25%; font-size: 4.5rem; animation-delay: 3s;">🥑</div>
+        <div class="floating-icon" style="top: 25%; left: 45%; font-size: 3rem; animation-delay: 0.5s;">🥦</div>
+        <div class="floating-icon reverse" style="bottom: 15%; right: 30%; font-size: 4rem; animation-delay: 2.5s;">🍇
+        </div>
+        <div class="floating-icon" style="top: 60%; right: 35%; font-size: 3.5rem; animation-delay: 4s;">🍊</div>
+    </div>
+
+    <!-- Navbar -->
+    <header id="header">
+        <div class="container nav-content">
+            <nav>
+                <a href="./index.html" class="logo">
+                    <div class="logo-symbol">
+                        <i data-lucide="apple"></i>
+                    </div>
+                    <span>Smart <span class="gradient-text">Diet</span></span>
+                </a>
+
+                <div class="nav-links">
+                    <a href="#features">Features</a>
+                    <a href="#gallery">Gallery</a>
+                    <a href="./tips.html">Tips</a>
+                    <a href="#plans">Plans</a>
+                    <a href="#feedback">Feedback</a>
+                    <a href="./login.html" class="login-link">Sign In</a>
+                    <a href="./register.html" class="btn btn-primary btn-sm">Join Free</a>
+                </div>
+
+                <!-- Mobile Menu Button (Future Use) -->
+                <button class="mobile-toggle" style="display: none;">
+                    <i data-lucide="menu"></i>
+                </button>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero container">
+        <div class="badge animate-up">Trusted by 10,000+ Healthy Individuals</div>
+        <h1 class="hero-title animate-up delay-1">
+            Fuel Your Body With <br />
+            <span class="gradient-text">Intelligent Choices</span>
+        </h1>
+        <p class="hero-subtitle animate-up delay-2">
+            The Smart Diet Advisor uses advanced analytics to create personalized dietary plans tailored to your
+            metrics, goals, and lifestyle.
+        </p>
+        <div class="hero-actions animate-up delay-3">
+            <a href="./assessment.html" class="btn btn-primary btn-lg">
+                Get Your Diet Plan <i data-lucide="arrow-right"></i>
+            </a>
+            <a href="#features" class="btn btn-secondary btn-lg" style="margin-left: 1rem;">
+                See How It Works
+            </a>
+        </div>
+    </section>
+
+    <!-- Stats Bar -->
+    <section class="stats container">
+        <div class="stats-grid">
+            <div class="stat-item">
+                <div class="stat-num gradient-text">95%</div>
+                <p class="stat-label">User Satisfaction</p>
+            </div>
+            <div class="stat-item">
+                <div class="stat-num gradient-text">250k+</div>
+                <p class="stat-label">Meals Tracked</p>
+            </div>
+            <div class="stat-item">
+                <div class="stat-num gradient-text">50+</div>
+                <p class="stat-label">Expert Nutritionists</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features" class="features container">
+        <div class="section-label">Innovative Features</div>
+        <h2 class="section-title">Everything You Need <br /> to Success</h2>
+
+        <div class="features-grid">
+            <div class="glass-card feature-item">
+                <i data-lucide="activity" class="feature-icon"></i>
+                <h3 class="feature-title">Smart Assessment</h3>
+                <p class="feature-desc">Analyzes age, gender, height, weight, activity level, and health conditions to
+                    build your unique profile.</p>
+            </div>
+            <div class="glass-card feature-item">
+                <i data-lucide="utensils" class="feature-icon"></i>
+                <h3 class="feature-title">Food Database</h3>
+                <p class="feature-desc">Explore thousands of food items with detailed nutritional values, calorie
+                    intake, and macronutrient distribution.</p>
+            </div>
+            <div class="glass-card feature-item">
+                <i data-lucide="message-square" class="feature-icon"></i>
+                <h3 class="feature-title">Nutrition Chat</h3>
+                <p class="feature-desc">Interact with certified experts anytime to resolve queries about your diet and
+                    meal timings.</p>
+            </div>
+            <div class="glass-card feature-item">
+                <i data-lucide="bell" class="feature-icon"></i>
+                <h3 class="feature-title">Smart Reminders</h3>
+                <p class="feature-desc">Never miss a meal or hydration break with personalized tips and nutrition
+                    updates.</p>
+            </div>
+            <div class="glass-card feature-item">
+                <i data-lucide="trending-up" class="feature-icon"></i>
+                <h3 class="feature-title">Progress Tracking</h3>
+                <p class="feature-desc">Effortlessly log food intake and monitor your journey towards your fitness
+                    goals.</p>
+            </div>
+            <div class="glass-card feature-item">
+                <i data-lucide="shield-check" class="feature-icon"></i>
+                <h3 class="feature-title">Secured Backend</h3>
+                <p class="feature-desc">Your health data is safe with our advanced database-driven infrastructure.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Gallery Section -->
+    <section id="gallery" class="container" style="padding: 4rem 0 6rem 0;">
+        <div class="section-label" style="text-align: center; justify-content: center;">Inspiration</div>
+        <h2 class="section-title" style="text-align: center;">Delicious Diet Meals</h2>
+
+        <div class="gallery-grid">
+            <div class="gallery-item glass-card" style="padding: 0; outline: none;">
+                <img src="https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=800&q=80"
+                    alt="Avocado Quinoa Salad" />
+                <div class="gallery-caption">
+                    <div class="gallery-title">Avocado Quinoa Salad</div>
+                    <div class="gallery-cal">340 kcal • High Protein</div>
+                </div>
+            </div>
+            <div class="gallery-item glass-card" style="padding: 0; outline: none;">
+                <img src="https://images.unsplash.com/photo-1467003909585-2f8a72700288?w=800&q=80"
+                    alt="Grilled Salmon Plate" />
+                <div class="gallery-caption">
+                    <div class="gallery-title">Grilled Salmon Plate</div>
+                    <div class="gallery-cal">420 kcal • Heart Healthy</div>
+                </div>
+            </div>
+            <div class="gallery-item glass-card" style="padding: 0; outline: none;">
+                <img src="https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=800&q=80"
+                    alt="Chicken & Veggie Bowl" />
+                <div class="gallery-caption">
+                    <div class="gallery-title">Chicken & Veggie Bowl</div>
+                    <div class="gallery-cal">380 kcal • Balanced Meal</div>
+                </div>
+            </div>
+            <div class="gallery-item glass-card" style="padding: 0; outline: none;">
+                <img src="https://images.unsplash.com/photo-1590301157890-4810ed352733?w=800&q=80"
+                    alt="Berry Smoothie Bowl" />
+                <div class="gallery-caption">
+                    <div class="gallery-title">Berry Smoothie Bowl</div>
+                    <div class="gallery-cal">320 kcal • Vitamin Rich</div>
+                </div>
+            </div>
+            <div class="gallery-item glass-card" style="padding: 0; outline: none;">
+                <img src="https://images.pexels.com/photos/5695914/pexels-photo-5695914.jpeg?auto=compress&cs=tinysrgb&w=800"
+                    alt="Grilled Shrimp Skewers" />
+                <div class="gallery-caption">
+                    <div class="gallery-title">Grilled Shrimp Skewers</div>
+                    <div class="gallery-cal">280 kcal • Lean Protein</div>
+                </div>
+            </div>
+            <div class="gallery-item glass-card" style="padding: 0; outline: none;">
+                <img src="https://images.unsplash.com/photo-1556910110-a5a63dfd393c?w=800&q=80"
+                    alt="Green Detox Smoothie" />
+                <div class="gallery-caption">
+                    <div class="gallery-title">Green Detox Smoothie</div>
+                    <div class="gallery-cal">180 kcal • Immune Boost</div>
+                </div>
+            </div>
+            <div class="gallery-item glass-card" style="padding: 0; outline: none;">
+                <img src="https://images.unsplash.com/photo-1512058564366-18510be2db19?w=800&q=80"
+                    alt="Tofu Veggie Stir Fry" />
+                <div class="gallery-caption">
+                    <div class="gallery-title">Tofu Veggie Stir Fry</div>
+                    <div class="gallery-cal">290 kcal • Plant-Based</div>
+                </div>
+            </div>
+            <div class="gallery-item glass-card" style="padding: 0; outline: none;">
+                <img src="https://images.unsplash.com/photo-1543339308-43e59d6b73a6?w=800&q=80"
+                    alt="Falafel Salad Bowl" />
+                <div class="gallery-caption">
+                    <div class="gallery-title">Falafel Salad Bowl</div>
+                    <div class="gallery-cal">410 kcal • High Fiber</div>
+                </div>
+            </div>
+            <div class="gallery-item glass-card" style="padding: 0; outline: none;">
+                <img src="https://images.unsplash.com/photo-1510693206972-df098062cb71?w=800&q=80"
+                    alt="Egg White Omelette" />
+                <div class="gallery-caption">
+                    <div class="gallery-title">Egg White Omelette</div>
+                    <div class="gallery-cal">210 kcal • Low Fat</div>
+                </div>
+            </div>
+            <div class="gallery-item glass-card" style="padding: 0; outline: none;">
+                <img src="https://images.unsplash.com/photo-1547592166-23ac45744acd?w=800&q=80" alt="Beef & Broccoli" />
+                <div class="gallery-caption">
+                    <div class="gallery-title">Beef & Broccoli</div>
+                    <div class="gallery-cal">480 kcal • High Iron</div>
+                </div>
+            </div>
+            <div class="gallery-item glass-card" style="padding: 0; outline: none;">
+                <img src="https://images.unsplash.com/photo-1494390248081-4e521a5940db?w=800&q=80"
+                    alt="Greek Yogurt Cup" />
+                <div class="gallery-caption">
+                    <div class="gallery-title">Greek Yogurt Cup</div>
+                    <div class="gallery-cal">180 kcal • Probiotic Glow</div>
+                </div>
+            </div>
+            <div class="gallery-item glass-card" style="padding: 0; outline: none;">
+                <img src="https://images.unsplash.com/photo-1529692236671-f1f6cf9683ba?w=800&q=80"
+                    alt="Zucchini Noodles" />
+                <div class="gallery-caption">
+                    <div class="gallery-title">Zucchini Noodles</div>
+                    <div class="gallery-cal">120 kcal • Low Carb</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Assessment Preview Section (Plans) -->
+    <section id="plans" class="assessment-preview">
+        <div class="container preview-content">
+            <div class="metrics-visual">
+                <div class="glass metric-card m-1">
+                    <div class="badge">Height</div>
+                    <div class="stat-num">182cm</div>
+                </div>
+                <div class="glass metric-card m-2">
+                    <div class="badge">Weight</div>
+                    <div class="stat-num">78.5kg</div>
+                </div>
+                <div class="glass metric-card m-3">
+                    <div class="badge" style="background: var(--primary); color: white;">Muscle Gain</div>
+                    <div class="stat-label">Active Goal</div>
+                </div>
+            </div>
+            <div class="preview-text">
+                <h2 class="section-title" style="text-align: left;">Personalized Just For You</h2>
+                <p class="hero-subtitle" style="margin-left: 0; text-align: left;">
+                    Our system creates a comprehensive view of your health by analyzing metrics and goals including
+                    Weight Management, Fitness Enhancement, or General Wellness.
+                </p>
+                <a href="./assessment.html" class="btn btn-primary">Try Assessment Now</a>
+            </div>
+        </div>
+    </section>
+
+    </div>
+    </section>
+
+    <!-- Feedback Section -->
+    <section id="feedback" class="container" style="padding: 4rem 0 6rem 0;">
+        <div class="section-label" style="text-align: center; justify-content: center;">We Value Your Opinion</div>
+        <h2 class="section-title" style="text-align: center;">What Our Users Say</h2>
+
+        <div id="feedbackList" class="gallery-grid" style="margin-bottom: 4rem;">
+            <!-- Feedbacks will be loaded here -->
+            <div class="glass-card" style="padding: 2rem; text-align: center; grid-column: 1 / -1;">
+                <p class="text-muted">Loading testimonials...</p>
+            </div>
+        </div>
+
+        <h2 class="section-title" style="text-align: center;">Send Us Your Feedback</h2>
+
+        <div class="glass-card" style="max-width: 600px; margin: 0 auto; padding: 3rem;">
+            <form id="feedbackForm" onsubmit="
+                event.preventDefault(); 
+                const formData = {
+                    name: document.getElementById('fbName').value,
+                    rating: document.querySelector('select').value,
+                    feedback: document.getElementById('fbMessage').value,
+                    email: document.getElementById('fbEmail').value || 'guest@example.com'
+                };
+                fetch('http://localhost:5000/api/feedbacks', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(formData)
+                })
+                .then(res => {
+                    if(res.ok) {
+                        alert('Thank you for your feedback! It will be visible soon.');
+                        document.getElementById('feedbackForm').reset();
+                    } else {
+                        alert('Failed to send feedback. Please try the dashboard.');
+                    }
+                })
+                .catch(err => {
+                    alert('Server currently offline. Feedback will be saved locally.');
+                    // Fallback to localStorage
+                    const localFbs = JSON.parse(localStorage.getItem('local_feedbacks') || '[]');
+                    localFbs.push({...formData, id: Date.now(), createdAt: new Date().toISOString()});
+                    localStorage.setItem('local_feedbacks', JSON.stringify(localFbs));
+                    document.getElementById('feedbackForm').reset();
+                });
+            ">
+                <div class="form-group" style="margin-bottom: 1.5rem;">
+                    <label for="fbName"
+                        style="display: block; margin-bottom: 0.5rem; color: var(--text-muted); font-weight: 500;">Your
+                        Name</label>
+                    <input type="text" id="fbName" class="input-field" placeholder="John Doe" required
+                        style="width: 100%; padding: 1rem 1.25rem; border-radius: 12px; background: rgba(255, 255, 255, 0.7); border: 1px solid var(--glass-border); font-family: inherit;">
+                </div>
+                <div class="form-group" style="margin-bottom: 1.5rem;">
+                    <label for="fbEmail"
+                        style="display: block; margin-bottom: 0.5rem; color: var(--text-muted); font-weight: 500;">Your
+                        Email</label>
+                    <input type="email" id="fbEmail" class="input-field" placeholder="john@example.com" required
+                        style="width: 100%; padding: 1rem 1.25rem; border-radius: 12px; background: rgba(255, 255, 255, 0.7); border: 1px solid var(--glass-border); font-family: inherit;">
+                </div>
+                <div class="form-group" style="margin-bottom: 1.5rem;">
+                    <label
+                        style="display: block; margin-bottom: 0.5rem; color: var(--text-muted); font-weight: 500;">Overall
+                        Experience</label>
+                    <select class="input-field" required
+                        style="width: 100%; padding: 1rem 1.25rem; border-radius: 12px; background: rgba(255, 255, 255, 0.7); border: 1px solid var(--glass-border); font-family: inherit;">
+                        <option value="" disabled selected>Select Rating</option>
+                        <option value="5">Excellent (5 Stars)</option>
+                        <option value="4">Good (4 Stars)</option>
+                        <option value="3">Average (3 Stars)</option>
+                        <option value="2">Poor (2 Stars)</option>
+                        <option value="1">Terrible (1 Star)</option>
+                    </select>
+                </div>
+                <div class="form-group" style="margin-bottom: 1.5rem;">
+                    <label for="fbMessage"
+                        style="display: block; margin-bottom: 0.5rem; color: var(--text-muted); font-weight: 500;">Your
+                        Comments</label>
+                    <textarea id="fbMessage" class="input-field" rows="4" placeholder="Tell us how we can improve..."
+                        required
+                        style="width: 100%; padding: 1rem 1.25rem; border-radius: 12px; background: rgba(255, 255, 255, 0.7); border: 1px solid var(--glass-border); font-family: inherit; resize: vertical;"></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%;">Submit Feedback</button>
+            </form>
+        </div>
+    </section>
+
+    <!-- Floating Chat Link -->
+    <a href="./chat.html" class="floating-chat" title="Chat with an Expert">
+        <i data-lucide="message-square"></i>
+    </a>
+
+    <!-- Admin Panel Access Section -->
+    <section class="admin-access-section container" style="padding: 6rem 0; text-align: center;">
+        <div class="glass-card admin-card" style="max-width: 600px; margin: 0 auto; padding: 3rem;">
+            <i data-lucide="shield-check" style="width: 48px; height: 48px; margin-bottom: 1.5rem; color: #3b82f6;"></i>
+            <h2>Administrative Access</h2>
+            <p class="text-muted" style="margin-bottom: 2rem;">
+                Authorized personnel can access the system dashboard, monitor user statistics, and manage health
+                assessments.
+            </p>
+            <a href="./admin-login.html" class="btn btn-secondary"
+                style="display: inline-flex; align-items: center; gap: 0.5rem; text-decoration: none;">
+                Enter Admin Portal <i data-lucide="arrow-right"></i>
+            </a>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer style="padding: 4rem 0; text-align: center; border-top: 1px solid var(--glass-border);">
+        <div class="container">
+            <a href="./index.html" class="logo" style="justify-content: center; margin-bottom: 1.5rem;">
+                <div class="logo-symbol">
+                    <i data-lucide="apple"></i>
+                </div>
+                <span>Smart <span class="gradient-text">Diet</span></span>
+            </a>
+            <p class="text-muted" style="max-width: 500px; margin: 0 auto 2rem auto;">
+                Improving awareness of nutrition for better health outcomes through efficient data management and
+                user-friendly interaction.
+            </p>
+            <div class="nav-links" style="justify-content: center; margin-bottom: 2rem;">
+                <a href="#">About</a>
+                <a href="#">Privacy</a>
+                <a href="#">Terms</a>
+                <a href="#">Contact</a>
+            </div>
+            <div
+                style="display: flex; justify-content: space-between; align-items: center; max-width: 1000px; margin: 2rem auto 0 auto; padding-top: 2rem; border-top: 1px solid var(--glass-border);">
+                <p class="text-muted" style="font-size: 0.8rem; margin: 0;">&copy; 2026 Smart Diet Advisor. All rights
+                    reserved.</p>
+                <a href="./admin-login.html" class="btn btn-secondary btn-sm"
+                    style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.75rem; text-decoration: none; opacity: 0.8;">
+                    <i data-lucide="shield" style="width: 14px;"></i>
+                    <span>Admin Dashboard</span>
+                </a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script>
+        // Initialize Lucide Icons
+        lucide.createIcons();
+
+        // Header Scroll Effect
+        window.addEventListener('scroll', () => {
+            const header = document.getElementById('header');
+            if (window.scrollY > 50) {
+                header.classList.add('scrolled');
+            } else {
+                header.classList.remove('scrolled');
+            }
+        });
+
+        // Intersection Observer for Animations
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, { threshold: 0.1 });
+
+        document.querySelectorAll('.animate-up').forEach(el => observer.observe(el));
+
+        // Fetch and display feedbacks
+        async function loadFeedbacks() {
+            const listEl = document.getElementById('feedbackList');
+            try {
+                const res = await fetch('http://localhost:5000/api/feedbacks');
+                const feedbacks = await res.json();
+                
+                if (feedbacks.length > 0) {
+                    listEl.innerHTML = feedbacks.slice(0, 6).map(f => `
+                        <div class="glass-card animate-up" style="padding: 2rem; display: flex; flex-direction: column; justify-content: space-between;">
+                            <div>
+                                <div style="color: #fbbf24; margin-bottom: 1rem;">
+                                    ${'★'.repeat(Number(f.rating) || 5)}${'☆'.repeat(5 - (Number(f.rating) || 5))}
+                                </div>
+                                <p class="text-muted" style="font-style: italic; margin-bottom: 1.5rem;">"${f.feedback}"</p>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--glass-border); pt: 1rem; margin-top: auto; padding-top: 1rem;">
+                                <span style="font-weight: 600; font-size: 0.9rem;">${f.name}</span>
+                                <span style="font-size: 0.75rem; color: var(--text-muted);">${new Date(f.createdAt).toLocaleDateString()}</span>
+                            </div>
+                        </div>
+                    `).join('');
+                } else {
+                    listEl.innerHTML = '<div class="glass-card" style="padding: 2rem; text-align: center; grid-column: 1 / -1;"><p class="text-muted">No testimonials yet. Be the first to leave one!</p></div>';
+                }
+                lucide.createIcons();
+            } catch (err) {
+                console.error('Failed to load feedbacks', err);
+                listEl.innerHTML = '<div class="glass-card" style="padding: 2rem; text-align: center; grid-column: 1 / -1;"><p class="text-muted">Could not load testimonials. Please ensure the server is running.</p></div>';
+            }
+        }
+        
+        loadFeedbacks();
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <script>
+        if (!localStorage.getItem('token') && !localStorage.getItem('user')) {
+            window.location.href = './login.html';
+        }
+    </script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Diet Advisor | Your Dashboard</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <!-- Main Style -->
+    <link rel="stylesheet" href="./styles/main.css">
+
+    <style>
+        .dashboard-page {
+            padding-top: 100px;
+            padding-bottom: 60px;
+            min-height: 100vh;
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        /* Stats Cards */
+        .stats-row {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem;
+            margin-bottom: 2.5rem;
+        }
+
+        .stat-card-small {
+            padding: 1.5rem;
+            border-radius: 20px;
+            text-align: center;
+        }
+
+        .stat-icon {
+            width: 40px;
+            height: 40px;
+            margin-bottom: 0.5rem;
+            color: var(--primary);
+        }
+
+        .stat-val {
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .stat-unit {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-left: 0.2rem;
+        }
+
+        /* Meal Tracking */
+        .meal-list {
+            margin-top: 1rem;
+        }
+
+        .meal-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.25rem 1.5rem;
+            border-bottom: 1px solid var(--glass-border);
+            transition: all 0.2s ease;
+        }
+
+        .meal-item:hover {
+            background: rgba(255, 255, 255, 0.5);
+            border-radius: 12px;
+        }
+
+        .meal-name {
+            font-weight: 600;
+            color: var(--text-main);
+        }
+
+        .meal-time {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        .meal-cals {
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        /* Sidebar Recommendations */
+        .rec-item {
+            padding: 1rem;
+            border-radius: 16px;
+            background: rgba(255, 255, 255, 0.5);
+            margin-bottom: 1rem;
+            display: flex;
+            gap: 1rem;
+            align-items: flex-start;
+        }
+
+        .rec-icon {
+            color: var(--accent);
+            padding-top: 0.2rem;
+        }
+
+        .rec-title {
+            font-weight: 600;
+            font-size: 0.95rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .rec-desc {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        .progress-circle {
+            width: 120px;
+            height: 120px;
+            margin: 0 auto 1rem;
+            border-radius: 50%;
+            background: conic-gradient(var(--primary) 70%, rgba(16, 185, 129, 0.1) 0%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .progress-circle::after {
+            content: '';
+            position: absolute;
+            width: 100px;
+            height: 100px;
+            background: var(--bg-main);
+            border-radius: 50%;
+            z-index: 1;
+        }
+
+        .progress-val {
+            position: relative;
+            z-index: 2;
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        @media (max-width: 1024px) {
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .stats-row {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Floating Fruit/Veg Icons Background -->
+    <div style="position: fixed; inset: 0; z-index: -1; pointer-events: none; opacity: 0.5; overflow: hidden;">
+        <!-- Floating Salad Bowls -->
+        <div class="floating-icon" style="top: 10%; left: 5%; font-size: 6rem; opacity: 0.6; animation-delay: 0s;">🥗
+        </div>
+        <div class="floating-icon reverse"
+            style="bottom: 10%; right: 5%; font-size: 7rem; opacity: 0.5; animation-delay: 1s;">🥗</div>
+
+        <!-- Smaller Fruits/Veg -->
+        <div class="floating-icon reverse" style="top: 15%; right: 20%; font-size: 4rem; animation-delay: 2s;">🍎</div>
+        <div class="floating-icon" style="bottom: 30%; left: 15%; font-size: 5rem; animation-delay: 1.5s;">🥕</div>
+        <div class="floating-icon reverse" style="top: 40%; left: 25%; font-size: 4.5rem; animation-delay: 3s;">🥑</div>
+        <div class="floating-icon" style="top: 25%; left: 45%; font-size: 3rem; animation-delay: 0.5s;">🥦</div>
+        <div class="floating-icon reverse" style="bottom: 15%; right: 30%; font-size: 4rem; animation-delay: 2.5s;">🍇
+        </div>
+        <div class="floating-icon" style="top: 60%; right: 35%; font-size: 3.5rem; animation-delay: 4s;">🍊</div>
+    </div>
+
+    <header class="scrolled">
+        <div class="container nav-content">
+            <nav>
+                <a href="./index.html" class="logo">
+                    <div class="logo-symbol">
+                        <i data-lucide="apple"></i>
+                    </div>
+                    <span>Smart <span class="gradient-text">Diet</span></span>
+                </a>
+
+                <div class="nav-links">
+                    <a href="./dashboard.html" class="active">Daily Track</a>
+                    <a href="./tracker.html">Food Tracker</a>
+                    <a href="./diet-rules.html">Diet Rules</a>
+                    <a href="./chat.html">Expert Chat</a>
+                    <a href="#"
+                        onclick="localStorage.removeItem('user'); localStorage.removeItem('token'); window.location.href='./index.html';"
+                        class="btn btn-secondary btn-sm">Sign Out</a>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <div class="dashboard-page container">
+        <div class="flex-between" style="margin-bottom: 3rem;">
+            <div>
+                <h1 style="font-size: 2.5rem;">Hello, <span class="gradient-text" id="userName">Friend</span>! 👋</h1>
+                <p class="text-muted" id="userGoalLine">Loading your personalized plan...</p>
+            </div>
+            <div class="glass"
+                style="padding: 1rem 1.5rem; border-radius: 16px; display: flex; align-items: center; gap: 0.75rem;">
+                <i data-lucide="calendar"></i>
+                <span style="font-weight: 600;" id="todayDate"></span>
+            </div>
+        </div>
+
+        <div class="stats-row">
+            <div class="glass-card stat-card-small">
+                <div class="progress-circle">
+                    <div class="progress-val">75%</div>
+                </div>
+                <div class="stat-val">1,500 <span class="stat-unit">/ 2000 kcal</span></div>
+                <div class="stat-label" style="margin-top: 0.5rem;">Calories Remaining: 500</div>
+            </div>
+
+            <div class="glass-card stat-card-small">
+                <div class="stat-icon" style="margin: 0 auto 1.5rem;"><i data-lucide="droplets"
+                        style="width: 100%; height: 100%;"></i></div>
+                <div class="stat-val"><span id="waterCurrent">0</span> <span class="stat-unit">/ <span
+                            id="waterGoal">2.5</span> Liters</span></div>
+                <div class="stat-label">Water Intake</div>
+                <button class="btn btn-secondary btn-sm" onclick="addWater()" style="margin-top: 1rem; width: 100%;">Add
+                    Glass</button>
+            </div>
+
+            <div class="glass-card stat-card-small">
+                <div class="stat-icon" style="margin: 0 auto 1.5rem;"><i data-lucide="footprints"
+                        style="width: 100%; height: 100%;"></i></div>
+                <div class="stat-val">Goal: 10,000 <span class="stat-unit">Steps</span></div>
+                <div class="stat-label">Daily Walking Target</div>
+            </div>
+        </div>
+
+        <div class="dashboard-grid">
+            <!-- Main Tracking -->
+            <div class="glass-card">
+                <div class="flex-between" style="margin-bottom: 2rem;">
+                    <h2>🍽️ Your Personalized Meal Plan</h2>
+                    <a href="./assessment.html" class="btn btn-secondary btn-sm"><i data-lucide="settings"></i> Change
+                        Preferences</a>
+                </div>
+
+                <!-- No preferences state -->
+                <div id="noPrefsMsg" style="display:none; text-align:center; padding: 3rem 1rem;">
+                    <div style="font-size:3rem; margin-bottom:1rem;">🥗</div>
+                    <p style="font-weight:600; margin-bottom:0.5rem;">No preferences set yet!</p>
+                    <p class="text-muted" style="margin-bottom:1.5rem;">Tell us about yourself to get a personalized
+                        meal plan.</p>
+                    <a href="./assessment.html" class="btn btn-primary">Set My Preferences <i
+                            data-lucide="arrow-right"></i></a>
+                </div>
+
+                <!-- Meal suggestions generated from preferences -->
+                <div class="meal-list" id="mealSuggestions"></div>
+
+                <div id="mealNote"
+                    style="display:none; margin-top:1.5rem; padding:1rem; border-radius:12px; background:rgba(16, 185, 129,0.08); font-size:0.85rem; color:var(--text-muted);">
+                    <i data-lucide="info" style="width:14px;height:14px;"></i>
+                    Suggestions are tailored to your goal, activity level, and health conditions. Adjust anytime via <a
+                        href="./assessment.html" style="color:var(--primary);">preferences</a>.
+                </div>
+            </div>
+
+            <!-- Side Info -->
+            <div class="sidebar">
+                <div class="glass-card" style="margin-bottom: 2rem;">
+                    <h3 style="margin-bottom: 1.5rem;"><i data-lucide="sparkles" style="color: var(--accent);"></i>
+                        Smart Tips</h3>
+                    <div id="smartTips"></div>
+                </div>
+
+                <div class="glass-card"
+                    style="background: linear-gradient(135deg, rgba(16, 185, 129, 0.2), rgba(59, 130, 246, 0.2)); border: 1px solid rgba(16, 185, 129, 0.2);">
+                    <h3 style="margin-bottom: 1rem;">Nutrient Distribution</h3>
+                    <div
+                        style="display: flex; gap: 0.5rem; height: 20px; border-radius: 10px; overflow: hidden; margin: 1.5rem 0;">
+                        <div style="flex: 4; background: #34d399;" title="Carbs"></div>
+                        <div style="flex: 3; background: #60a5fa;" title="Protein"></div>
+                        <div style="flex: 3; background: #f59e0b;" title="Fat"></div>
+                    </div>
+                    <div
+                        style="display: flex; justify-content: space-between; font-size: 0.8rem; color: var(--text-muted);">
+                        <span>40% Carbs</span>
+                        <span>30% Prot</span>
+                        <span>30% Fat</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Floating Chat Link -->
+    <a href="./chat.html" class="floating-chat" title="Chat with an Expert">
+        <i data-lucide="message-square"></i>
+    </a>
+
+    <!-- Footer -->
+    <footer style="padding: 4rem 0; text-align: center; border-top: 1px solid var(--glass-border);">
+        <div class="container">
+            <a href="./index.html" class="logo" style="justify-content: center; margin-bottom: 1.5rem;">
+                <div class="logo-symbol">
+                    <i data-lucide="apple"></i>
+                </div>
+                <span>Smart <span class="gradient-text">Diet</span></span>
+            </a>
+            <p class="text-muted" style="max-width: 500px; margin: 0 auto 2rem auto;">
+                Improving awareness of nutrition for better health outcomes through efficient data management and
+                user-friendly interaction.
+            </p>
+            <div class="nav-links" style="justify-content: center; margin-bottom: 2rem;">
+                <a href="#">About</a>
+                <a href="#">Privacy</a>
+                <a href="#">Terms</a>
+                <a href="#">Contact</a>
+            </div>
+            <p class="text-muted" style="font-size: 0.8rem;">&copy; 2026 Smart Diet Advisor. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        // ── Meal database keyed by goal ──────────────────────────────────────
+        const MEAL_PLANS = {
+            'Weight Management': [
+                { name: 'Veggie Omelette (2 eggs)', time: 'Breakfast | 08:00 AM', kcal: 220, emoji: '🥚' },
+                { name: 'Green Salad with Grilled Chicken', time: 'Lunch | 12:30 PM', kcal: 380, emoji: '🥗' },
+                { name: 'Apple & Walnuts', time: 'Snack | 04:00 PM', kcal: 180, emoji: '🍎' },
+                { name: 'Steamed Fish with Broccoli', time: 'Dinner | 07:30 PM', kcal: 320, emoji: '🐟' },
+            ],
+            'Fitness Enhancement': [
+                { name: 'Banana Protein Smoothie', time: 'Breakfast | 07:30 AM', kcal: 350, emoji: '🍌' },
+                { name: 'Brown Rice + Grilled Chicken', time: 'Lunch | 01:00 PM', kcal: 550, emoji: '🍗' },
+                { name: 'Greek Yogurt + Berries', time: 'Snack | 04:00 PM', kcal: 200, emoji: '🫐' },
+                { name: 'Salmon with Sweet Potato', time: 'Dinner | 07:30 PM', kcal: 480, emoji: '🐟' },
+            ],
+            'General Wellness': [
+                { name: 'Oatmeal with Honey & Fruits', time: 'Breakfast | 08:00 AM', kcal: 310, emoji: '🥣' },
+                { name: 'Quinoa Bowl with Avocado', time: 'Lunch | 12:30 PM', kcal: 430, emoji: '🥑' },
+                { name: 'Mixed Nuts', time: 'Snack | 04:00 PM', kcal: 150, emoji: '🥜' },
+                { name: 'Vegetable Stir-fry with Tofu', time: 'Dinner | 07:30 PM', kcal: 360, emoji: '🥦' },
+            ],
+            'Muscle Gain': [
+                { name: 'Eggs + Whole Wheat Toast + Milk', time: 'Breakfast | 07:00 AM', kcal: 520, emoji: '🥛' },
+                { name: 'Chicken Breast + Pasta + Veg', time: 'Lunch | 12:30 PM', kcal: 650, emoji: '🍝' },
+                { name: 'Protein Bar + Banana', time: 'Snack | 04:00 PM', kcal: 320, emoji: '🍫' },
+                { name: 'Beef Steak with Loaded Veggies', time: 'Dinner | 07:30 PM', kcal: 600, emoji: '🥩' },
+            ]
+        };
+
+        // ── Tips keyed by goal ───────────────────────────────────────────────
+        const TIPS = {
+            'Weight Management': [
+                { icon: 'scale', title: 'Calorie Deficit', desc: 'Aim for a 300–500 kcal daily deficit for healthy, steady weight loss.' },
+                { icon: 'droplets', title: 'Stay Hydrated', desc: 'Drink 2+ liters of water daily. It curbs hunger and boosts metabolism.' },
+            ],
+            'Fitness Enhancement': [
+                { icon: 'dumbbell', title: 'Pre-Workout Fuel', desc: 'Eat a banana or light carb 30–60 min before exercise for energy.' },
+                { icon: 'zap', title: 'Post-Workout Recovery', desc: 'Consume protein within 45 min after training to repair muscles.' },
+            ],
+            'General Wellness': [
+                { icon: 'heart', title: 'Eat the Rainbow', desc: 'Include a variety of colorful vegetables & fruits for diverse nutrients.' },
+                { icon: 'moon', title: 'Sleep & Digestion', desc: 'Quality sleep helps regulate hunger hormones (ghrelin and leptin).' },
+            ],
+            'Muscle Gain': [
+                { icon: 'beef', title: 'Protein is Key', desc: 'Target 1.6–2.2g of protein per kg of body weight daily.' },
+                { icon: 'trending-up', title: 'Progressive Overload', desc: 'Gradually increase workout intensity to continuously build muscle.' },
+            ]
+        };
+
+        // ── Activity-level calorie adjustments ───────────────────────────────
+        const ACTIVITY_LABELS = {
+            sedentary: { label: 'Sedentary', multiplier: 1.2 },
+            light: { label: 'Lightly Active', multiplier: 1.375 },
+            moderate: { label: 'Moderately Active', multiplier: 1.55 },
+            very: { label: 'Very Active', multiplier: 1.725 }
+        };
+
+        // ── Build dashboard from preferences ────────────────────────────────
+        function buildDashboard() {
+            // Today's date
+            document.getElementById('todayDate').textContent = new Date().toLocaleDateString('en-US', {
+                weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
+            });
+
+            // Greet User
+            let userStr = localStorage.getItem('user');
+            let userId = 'default';
+            let name = 'Friend';
+            if (userStr) {
+                try {
+                    const u = JSON.parse(userStr);
+                    userId = u._id || u.email || userStr;
+                    name = u.name || u.firstName || name;
+                } catch (e) { userId = userStr; }
+            }
+            document.getElementById('userName').textContent = name;
+
+            const raw = localStorage.getItem('dietPrefs_' + userId);
+            if (!raw) {
+                document.getElementById('noPrefsMsg').style.display = 'block';
+                document.getElementById('mealSuggestions').style.display = 'none';
+                // Default tips
+                renderTips('General Wellness');
+                return;
+            }
+
+            const prefs = JSON.parse(raw);
+            const goal = prefs.goal || 'General Wellness';
+            const actInfo = ACTIVITY_LABELS[prefs.activity] || ACTIVITY_LABELS.moderate;
+
+            // Greet
+            document.getElementById('userGoalLine').textContent =
+                `Goal: ${goal}  •  Activity: ${actInfo.label}`
+                + (prefs.health && prefs.health.toLowerCase() !== 'none' && prefs.health.trim() !== ''
+                    ? `  •  Condition: ${prefs.health}` : '');
+
+            // Meals
+            const meals = MEAL_PLANS[goal] || MEAL_PLANS['General Wellness'];
+            // Filter out allergens (basic check)
+            const allergyList = (prefs.allergies || '').toLowerCase().split(',').map(a => a.trim()).filter(Boolean);
+            const safeMeals = meals.filter(m =>
+                !allergyList.some(a => a !== 'none' && m.name.toLowerCase().includes(a))
+            );
+
+            const totalKcal = safeMeals.reduce((s, m) => s + m.kcal, 0);
+            const mealList = document.getElementById('mealSuggestions');
+            mealList.innerHTML = safeMeals.map((m, i) => `
+                <div class="meal-item" style="${i === safeMeals.length - 1 ? 'border-bottom:none;' : ''}">
+                    <div style="display:flex; align-items:center; gap:0.75rem;">
+                        <span style="font-size:1.6rem;">${m.emoji}</span>
+                        <div>
+                            <p class="meal-name">${m.name}</p>
+                            <p class="meal-time">${m.time}</p>
+                        </div>
+                    </div>
+                    <div class="meal-cals">${m.kcal} kcal</div>
+                </div>
+            `).join('');
+
+            // Update calorie ring
+            document.querySelector('.stat-val').innerHTML =
+                `${totalKcal} <span class="stat-unit">kcal / day</span>`;
+            document.querySelector('.stat-label').textContent = `Estimated daily target`;
+
+            // Show note
+            document.getElementById('mealNote').style.display = 'block';
+
+            // Tips
+            renderTips(goal);
+        }
+
+        function renderTips(goal) {
+            const tips = TIPS[goal] || TIPS['General Wellness'];
+            document.getElementById('smartTips').innerHTML = tips.map(t => `
+                <div class="rec-item">
+                    <div class="rec-icon"><i data-lucide="${t.icon}" size="18"></i></div>
+                    <div>
+                        <p class="rec-title">${t.title}</p>
+                        <p class="rec-desc">${t.desc}</p>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // ── Water Logic ───────────────────────────────────────────────────────
+        let userStr = localStorage.getItem('user');
+        let userId = 'default';
+        if (userStr) {
+            try { userId = JSON.parse(userStr)._id || JSON.parse(userStr).email || userStr; }
+            catch (e) { userId = userStr; }
+        }
+        let dateKey = new Date().toISOString().slice(0, 10);
+        let waterKey = 'waterIntake_' + userId + '_' + dateKey;
+
+        let waterCurrent = parseFloat(localStorage.getItem(waterKey) || '0');
+        const waterGoal = 2.5;
+
+        function updateWaterUI() {
+            const currentEl = document.getElementById('waterCurrent');
+            if (currentEl) currentEl.textContent = waterCurrent.toFixed(2);
+        }
+
+        window.addWater = function () {
+            waterCurrent += 0.25;
+            localStorage.setItem(waterKey, waterCurrent.toString());
+            updateWaterUI();
+        };
+
+        // Initialize water UI
+        updateWaterUI();
+
+        // Water reminder every 2 hours
+        setInterval(() => {
+            if (waterCurrent < waterGoal) {
+                alert("💧 Time to hydrate! Don't forget to drink a glass of water.");
+            }
+        }, 7200000); // 2 hours in ms
+
+        buildDashboard();
+        lucide.createIcons();
+    </script>
+</body>
+
+</html>

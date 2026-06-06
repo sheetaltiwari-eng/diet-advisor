@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Diet Advisor | Admin Access</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    
+    <!-- Main Style -->
+    <link rel="stylesheet" href="./styles/main.css">
+    
+    <style>
+        .login-page {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding-top: 100px;
+        }
+
+        .login-card {
+            width: 100%;
+            max-width: 450px;
+            padding: 3rem;
+            text-align: center;
+            border: 1px solid rgba(59, 130, 246, 0.2);
+        }
+
+        .login-logo {
+            width: 60px;
+            height: 60px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #3b82f6, #2563eb);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.5rem;
+            color: white;
+            box-shadow: 0 8px 16px rgba(37, 99, 235, 0.2);
+        }
+
+        .form-group {
+            text-align: left;
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .input-field {
+            width: 100%;
+            padding: 1rem 1.25rem;
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.7);
+            border: 1px solid var(--glass-border);
+            color: var(--text-main);
+            font-family: inherit;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .input-field:focus {
+            outline: none;
+            border-color: #3b82f6;
+            background: rgba(255, 255, 255, 0.9);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+        }
+
+        .btn-admin {
+            width: 100%;
+            margin-top: 1rem;
+            background: #3b82f6;
+            color: white;
+            border: none;
+            padding: 1rem;
+            border-radius: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .btn-admin:hover {
+            background: #2563eb;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+        }
+
+        .admin-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            background: rgba(59, 130, 246, 0.1);
+            color: #3b82f6;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Floating Background -->
+    <div style="position: fixed; inset: 0; z-index: -1; pointer-events: none; opacity: 0.3; overflow: hidden;">
+        <div class="floating-icon" style="top: 20%; left: 10%; font-size: 5rem;">🛡️</div>
+        <div class="floating-icon reverse" style="bottom: 20%; right: 10%; font-size: 6rem;">📊</div>
+    </div>
+    
+    <header>
+        <div class="container nav-content">
+            <nav>
+                <a href="./index.html" class="logo">
+                    <div class="logo-symbol">
+                        <i data-lucide="apple"></i>
+                    </div>
+                </a>
+                <a href="./index.html" class="btn btn-secondary btn-sm">Exit Portal</a>
+            </nav>
+        </div>
+    </header>
+
+    <div class="login-page container">
+        <div class="glass-card login-card animate-up">
+            <div class="login-logo">
+                <i data-lucide="shield-check"></i>
+            </div>
+            <div class="admin-badge">Admin Access</div>
+            <h1>Control Panel</h1>
+            <p class="text-muted" style="margin-bottom: 2rem;">Secure authentication required</p>
+            
+            <form id="adminLoginForm">
+                <div class="form-group">
+                    <label for="email">Admin Email</label>
+                    <input type="email" id="email" class="input-field" placeholder="admin@dietadvisor.com" required>
+                </div>
+                
+                <div class="form-group" style="margin-bottom: 2rem;">
+                    <label for="password">Security Password</label>
+                    <input type="password" id="password" class="input-field" placeholder="••••••••" required>
+                </div>
+
+                <div id="error-box" style="display:none; color: #ef4444; background: rgba(239, 68, 68, 0.1); padding: 0.75rem; border-radius: 8px; margin-bottom: 1.5rem; font-size: 0.85rem;">
+                    <i data-lucide="alert-circle" style="width: 16px; vertical-align: middle;"></i>
+                    <span id="error-msg"></span>
+                </div>
+
+                <button type="submit" class="btn-admin">
+                    Secure Login <i data-lucide="lock"></i>
+                </button>
+            </form>
+
+            <div style="margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid var(--glass-border); font-size: 0.85rem; color: var(--text-muted);">
+                System Administrator? Contact IT for password reset.
+            </div>
+        </div>
+    </div>
+
+    <script>
+        lucide.createIcons();
+
+        const loginForm = document.getElementById('adminLoginForm');
+        const emailInput = document.getElementById('email');
+        const passwordInput = document.getElementById('password');
+        const errorBox = document.getElementById('error-box');
+        const errorMsg = document.getElementById('error-msg');
+        const submitBtn = document.querySelector('.btn-admin');
+
+        loginForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            errorBox.style.display = 'none';
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = 'Verifying... <i data-lucide="loader" class="animate-spin"></i>';
+            lucide.createIcons();
+
+            const email = emailInput.value;
+            const password = passwordInput.value;
+
+            if (password.length !== 6) {
+                errorBox.style.display = 'block';
+                errorMsg.textContent = 'Password should be only 6 digits';
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = 'Secure Login <i data-lucide="lock"></i>';
+                lucide.createIcons();
+                return;
+            }
+
+            try {
+                const response = await fetch('http://localhost:5000/api/auth/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, password }),
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    if (data.role !== 'admin') {
+                        throw new Error('Access denied. Admin portal is for administrators only.');
+                    }
+                    
+                    localStorage.setItem('isAdmin', 'true');
+                    localStorage.setItem('token', data.token);
+                    localStorage.setItem('user', JSON.stringify(data));
+                    
+                    submitBtn.style.background = '#10b981';
+                    submitBtn.innerHTML = 'Access Granted! <i data-lucide="check-circle"></i>';
+                    lucide.createIcons();
+                    
+                    setTimeout(() => {
+                        window.location.href = './admin-dashboard.html';
+                    }, 1000);
+                } else {
+                    throw new Error(data.message || 'Authentication failed');
+                }
+            } catch (error) {
+                console.error('Admin login error:', error);
+                
+                let message = error.message;
+                if (error.name === 'TypeError' || message.includes('fetch') || message.includes('NetworkError')) {
+                    message = 'Cannot connect to server. Please ensure the backend is running.';
+                }
+                
+                errorBox.style.display = 'block';
+                errorMsg.textContent = message;
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = 'Secure Login <i data-lucide="lock"></i>';
+                lucide.createIcons();
+            }
+        });
+    </script>
+</body>
+</html>

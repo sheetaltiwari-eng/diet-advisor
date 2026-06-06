@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Diet Advisor | Sign Up</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <!-- Main Style -->
+    <link rel="stylesheet" href="./styles/main.css">
+
+    <style>
+        .register-page {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding-top: 100px;
+            padding-bottom: 40px;
+        }
+
+        .register-card {
+            width: 100%;
+            max-width: 550px;
+            padding: 3rem;
+            text-align: center;
+        }
+
+        .logo-box {
+            width: 60px;
+            height: 60px;
+            border-radius: 12px;
+            background: var(--gradient);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.5rem;
+            color: white;
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+        }
+
+        .form-group {
+            text-align: left;
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .input-field {
+            width: 100%;
+            padding: 1rem 1.25rem;
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.7);
+            border: 1px solid var(--glass-border);
+            color: var(--text-main);
+            font-family: inherit;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .input-field:focus {
+            outline: none;
+            border-color: var(--primary);
+            background: rgba(255, 255, 255, 0.9);
+            box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.2);
+        }
+
+        .btn-block {
+            width: 100%;
+            margin-top: 1rem;
+        }
+
+        .footer-link {
+            display: block;
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--glass-border);
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        .footer-link a {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        @media (max-width: 600px) {
+            .grid-2 {
+                grid-template-columns: 1fr;
+                gap: 0;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Floating Fruit/Veg Icons Background -->
+    <div style="position: fixed; inset: 0; z-index: -1; pointer-events: none; opacity: 0.5; overflow: hidden;">
+        <!-- Floating Salad Bowls -->
+        <div class="floating-icon" style="top: 10%; left: 5%; font-size: 6rem; opacity: 0.6; animation-delay: 0s;">🥗
+        </div>
+        <div class="floating-icon reverse"
+            style="bottom: 10%; right: 5%; font-size: 7rem; opacity: 0.5; animation-delay: 1s;">🥗</div>
+
+        <!-- Smaller Fruits/Veg -->
+        <div class="floating-icon reverse" style="top: 15%; right: 20%; font-size: 4rem; animation-delay: 2s;">🍎</div>
+        <div class="floating-icon" style="bottom: 30%; left: 15%; font-size: 5rem; animation-delay: 1.5s;">🥕</div>
+        <div class="floating-icon reverse" style="top: 40%; left: 25%; font-size: 4.5rem; animation-delay: 3s;">🥑</div>
+        <div class="floating-icon" style="top: 25%; left: 45%; font-size: 3rem; animation-delay: 0.5s;">🥦</div>
+        <div class="floating-icon reverse" style="bottom: 15%; right: 30%; font-size: 4rem; animation-delay: 2.5s;">🍇
+        </div>
+        <div class="floating-icon" style="top: 60%; right: 35%; font-size: 3.5rem; animation-delay: 4s;">🍊</div>
+    </div>
+
+    <header>
+        <div class="container nav-content">
+            <nav>
+                <a href="./index.html" class="logo">
+                    <div class="logo-symbol">
+                        <i data-lucide="apple"></i>
+                    </div>
+                </a>
+                <a href="./index.html" class="btn btn-secondary btn-sm">Back to Home</a>
+            </nav>
+        </div>
+    </header>
+
+    <div class="register-page container">
+        <div class="glass-card register-card animate-up">
+            <div class="logo-box">
+                <i data-lucide="user-plus"></i>
+            </div>
+            <h1>Create Account</h1>
+            <p class="text-muted" style="margin-bottom: 2rem;">Join Smart Diet Advisor today</p>
+
+            <form action="./assessment.html">
+                <div class="grid-2">
+                    <div class="form-group">
+                        <label for="firstName">First Name</label>
+                        <input type="text" id="firstName" class="input-field" placeholder="John" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="lastName">Last Name</label>
+                        <input type="text" id="lastName" class="input-field" placeholder="Doe" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="mobile">Mobile No</label>
+                    <input type="tel" id="mobile" class="input-field" placeholder="+1 (555) 000-0000" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="email">Email Address</label>
+                    <input type="email" id="email" class="input-field" placeholder="john@example.com" required>
+                </div>
+
+                <div class="grid-2">
+                    <div class="form-group">
+                        <label for="password">Password</label>
+                        <input type="password" id="password" class="input-field" placeholder="••••••••" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="confirm">Confirm</label>
+                        <input type="password" id="confirm" class="input-field" placeholder="••••••••" required>
+                    </div>
+                </div>
+
+                <div class="form-group" style="display: flex; align-items: center; gap: 0.5rem; margin-top: -0.5rem;">
+                    <input type="checkbox" id="terms" required>
+                    <label for="terms" style="margin-bottom: 0; cursor: pointer;">I agree to the <a href="#"
+                            class="gradient-text">Terms of Service</a></label>
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-block">
+                    Create Account <i data-lucide="user-plus"></i>
+                </button>
+            </form>
+
+            <div class="footer-link">
+                Already have an account? <a href="./login.html">Sign In</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer style="padding: 4rem 0; text-align: center; border-top: 1px solid var(--glass-border);">
+        <div class="container">
+            <a href="./index.html" class="logo" style="justify-content: center; margin-bottom: 1.5rem;">
+                <div class="logo-symbol">
+                    <i data-lucide="apple"></i>
+                </div>
+                <span>Smart <span class="gradient-text">Diet</span></span>
+            </a>
+            <p class="text-muted" style="max-width: 500px; margin: 0 auto 2rem auto;">
+                Improving awareness of nutrition for better health outcomes through efficient data management and
+                user-friendly interaction.
+            </p>
+            <div class="nav-links" style="justify-content: center; margin-bottom: 2rem;">
+                <a href="#">About</a>
+                <a href="#">Privacy</a>
+                <a href="#">Terms</a>
+                <a href="#">Contact</a>
+            </div>
+            <p class="text-muted" style="font-size: 0.8rem;">&copy; 2026 Smart Diet Advisor. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        lucide.createIcons();
+
+        const registerForm = document.querySelector('form');
+        const firstNameInput = document.getElementById('firstName');
+        const lastNameInput = document.getElementById('lastName');
+        const emailInput = document.getElementById('email');
+        const passwordInput = document.getElementById('password');
+        const confirmInput = document.getElementById('confirm');
+        const submitBtn = registerForm.querySelector('button[type="submit"]');
+
+        registerForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            // Remove previous messages
+            const existingError = registerForm.querySelector('.error-message');
+            if (existingError) existingError.remove();
+            const existingSuccess = registerForm.querySelector('.success-message');
+            if (existingSuccess) existingSuccess.remove();
+
+            // Basic validation
+            if (passwordInput.value.length !== 6) {
+                showError('Password should be only 6 digits');
+                return;
+            }
+
+            if (passwordInput.value !== confirmInput.value) {
+                showError('Passwords do not match');
+                return;
+            }
+
+            // UI State: Loading
+            const originalBtnText = submitBtn.innerHTML;
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = 'Creating account... <i data-lucide="loader" class="animate-spin"></i>';
+            lucide.createIcons();
+
+            const registerData = {
+                name: `${firstNameInput.value} ${lastNameInput.value}`,
+                email: emailInput.value,
+                password: passwordInput.value
+            };
+
+            try {
+                const response = await fetch('http://localhost:5000/api/auth/register', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(registerData)
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(data.message || 'Registration failed');
+                }
+
+                // Success: Store user info and token
+                localStorage.setItem('user', JSON.stringify(data));
+                localStorage.setItem('token', data.token);
+
+                // Show success status
+                submitBtn.classList.remove('btn-primary');
+                submitBtn.classList.add('btn-success');
+                submitBtn.innerHTML = 'Success! Redirecting... <i data-lucide="check"></i>';
+                lucide.createIcons();
+
+                // Redirect
+                setTimeout(() => {
+                    window.location.href = './assessment.html';
+                }, 1000);
+
+            } catch (error) {
+                console.error('Registration error:', error);
+                
+                let message = error.message;
+                if (error.name === 'TypeError' || message.includes('fetch') || message.includes('NetworkError')) {
+                    message = 'Cannot connect to server. Please ensure the backend is running.';
+                }
+
+                showError(message);
+
+                // Reset button
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = originalBtnText;
+                lucide.createIcons();
+            }
+        });
+
+        function showError(message) {
+            const errorMsg = document.createElement('div');
+            errorMsg.className = 'error-message';
+            errorMsg.style.background = 'rgba(239, 68, 68, 0.1)';
+            errorMsg.style.color = '#ef4444';
+            errorMsg.style.padding = '1rem';
+            errorMsg.style.borderRadius = '12px';
+            errorMsg.style.marginTop = '1rem';
+            errorMsg.style.fontSize = '0.9rem';
+            errorMsg.style.borderLeft = '4px solid #ef4444';
+            errorMsg.style.textAlign = 'left';
+            errorMsg.innerHTML = `<i data-lucide="alert-circle" style="vertical-align: middle; width: 16px; margin-right: 8px;"></i> ${message}`;
+            
+            registerForm.appendChild(errorMsg);
+            lucide.createIcons();
+        }
+    </script>
+</body>
+
+</html>

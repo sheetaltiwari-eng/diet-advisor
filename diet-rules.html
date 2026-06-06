@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script>
+        if (!localStorage.getItem('token') && !localStorage.getItem('user')) {
+            window.location.href = './login.html';
+        }
+    </script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Diet Advisor | My Dietary Rules</title>
+    <meta name="description" content="Personalized dietary rules and guidelines tailored to your health goals and conditions.">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link rel="stylesheet" href="./styles/main.css">
+
+    <style>
+        .rules-page {
+            padding-top: 110px;
+            padding-bottom: 70px;
+            min-height: 100vh;
+        }
+
+        /* Profile tag strip */
+        .profile-strip {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.6rem;
+            margin: 1.2rem 0 2.5rem;
+        }
+        .profile-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            padding: 0.35rem 0.9rem;
+            border-radius: 30px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            background: rgba(16, 185, 129,0.1);
+            border: 1px solid rgba(16, 185, 129,0.25);
+            color: var(--primary);
+        }
+        .profile-tag.orange { background:rgba(245,158,11,0.1); border-color:rgba(245,158,11,0.25); color:#d97706; }
+        .profile-tag.blue   { background:rgba(59,130,246,0.1); border-color:rgba(59,130,246,0.25); color:#2563eb; }
+        .profile-tag.red    { background:rgba(239,68,68,0.1); border-color:rgba(239,68,68,0.25); color:#dc2626; }
+
+        /* Section titles */
+        .section-strip {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 1.25rem;
+        }
+        .section-strip-icon {
+            width: 38px; height: 38px;
+            border-radius: 12px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.1rem;
+        }
+        .icon-green  { background: rgba(16, 185, 129,0.15); }
+        .icon-red    { background: rgba(239,68,68,0.12); }
+        .icon-blue   { background: rgba(59,130,246,0.12); }
+        .icon-yellow { background: rgba(245,158,11,0.12); }
+
+        /* Rules layout */
+        .rules-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin-bottom: 2.5rem;
+        }
+
+        /* Dos / Donts lists */
+        .rule-list { list-style: none; padding: 0; margin: 0; }
+        .rule-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.75rem;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid rgba(16, 185, 129,0.08);
+            font-size: 0.92rem;
+            line-height: 1.5;
+            transition: background 0.2s;
+        }
+        .rule-item:last-child { border-bottom: none; }
+        .rule-item:hover { background: rgba(16, 185, 129,0.04); border-radius: 10px; }
+        .rule-bullet {
+            width: 22px; height: 22px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 0.7rem; font-weight: 700;
+            flex-shrink: 0; margin-top: 0.1rem;
+        }
+        .bullet-do   { background: rgba(16, 185, 129,0.18); color: #059669; }
+        .bullet-dont { background: rgba(239,68,68,0.15); color: #dc2626;  }
+        .rule-text strong { color: var(--text-main); }
+        .rule-text span   { color: var(--text-muted); font-size: 0.83rem; display: block; }
+
+        /* Daily schedule */
+        .schedule-wrap { display: flex; flex-direction: column; gap: 0.85rem; }
+        .schedule-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem 1.25rem;
+            border-radius: 16px;
+            background: rgba(255,255,255,0.6);
+            border: 1px solid var(--glass-border);
+            transition: all 0.2s;
+        }
+        .schedule-item:hover { border-color: var(--primary); transform: translateX(4px); }
+        .schedule-time {
+            min-width: 80px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+        .schedule-meal { font-weight: 600; font-size: 0.92rem; }
+        .schedule-desc { font-size: 0.8rem; color: var(--text-muted); margin-top: 0.1rem; }
+        .meal-dot {
+            width: 10px; height: 10px; border-radius: 50%;
+            background: var(--gradient);
+            flex-shrink: 0;
+        }
+
+        /* Key numbers bar */
+        .numbers-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1.25rem;
+            margin-bottom: 2.5rem;
+        }
+        .number-card {
+            background: rgba(255,255,255,0.6);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 1.5rem 1rem;
+            text-align: center;
+            transition: all 0.3s;
+        }
+        .number-card:hover { transform: translateY(-4px); border-color: var(--primary); }
+        .number-val {
+            font-size: 1.9rem; font-weight: 800;
+            background: linear-gradient(135deg, #34d399, #60a5fa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .number-lbl { font-size: 0.8rem; color: var(--text-muted); margin-top: 0.25rem; font-weight: 600; }
+
+        /* Condition-specific alert */
+        .condition-alert {
+            border-radius: 18px;
+            padding: 1.5rem 1.75rem;
+            margin-bottom: 2rem;
+            border-left: 4px solid;
+            display: flex;
+            gap: 1rem;
+            align-items: flex-start;
+        }
+        .alert-warn  { background: rgba(245,158,11,0.08); border-color: #f59e0b; }
+        .alert-info  { background: rgba(59,130,246,0.07); border-color: #3b82f6; }
+        .alert-icon  { font-size: 1.5rem; flex-shrink: 0; }
+        .alert-title { font-weight: 700; margin-bottom: 0.3rem; }
+        .alert-body  { font-size: 0.88rem; color: var(--text-muted); line-height: 1.55; }
+
+        /* No prefs banner */
+        .no-prefs {
+            text-align: center;
+            padding: 5rem 2rem;
+        }
+
+        @media (max-width: 900px) {
+            .rules-grid { grid-template-columns: 1fr; }
+            .numbers-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+        @media (max-width: 580px) {
+            .numbers-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+    </style>
+</head>
+<body>
+    <!-- Floating bg -->
+    <div style="position:fixed;inset:0;z-index:-1;pointer-events:none;opacity:0.35;overflow:hidden;">
+        <div class="floating-icon" style="top:6%;left:3%;font-size:5.5rem;animation-delay:0s;">🥗</div>
+        <div class="floating-icon reverse" style="bottom:10%;right:4%;font-size:6.5rem;animation-delay:1s;">🥗</div>
+        <div class="floating-icon reverse" style="top:18%;right:16%;font-size:4rem;animation-delay:2s;">🍎</div>
+        <div class="floating-icon" style="bottom:28%;left:10%;font-size:4.5rem;animation-delay:1.5s;">🥕</div>
+        <div class="floating-icon" style="top:50%;right:32%;font-size:3rem;animation-delay:3.5s;">🥦</div>
+    </div>
+
+    <header class="scrolled">
+        <div class="container nav-content">
+            <nav>
+                <a href="./index.html" class="logo">
+                    <div class="logo-symbol"><i data-lucide="apple"></i></div>
+                    <span>Smart <span class="gradient-text">Diet</span></span>
+                </a>
+                <div class="nav-links">
+                    <a href="./dashboard.html">Daily Track</a>
+                    <a href="./tracker.html">Food Tracker</a>
+                    <a href="./diet-rules.html" class="active">Diet Rules</a>
+                    <a href="./chat.html">Expert Chat</a>
+                    <a href="#" onclick="localStorage.removeItem('user'); localStorage.removeItem('token'); window.location.href='./index.html';" class="btn btn-secondary btn-sm">Sign Out</a>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <div class="rules-page container" id="mainContent">
+        <!-- Injected by JS -->
+    </div>
+
+    <!-- Footer -->
+    <footer style="padding:3rem 0;text-align:center;border-top:1px solid var(--glass-border);">
+        <div class="container">
+            <a href="./index.html" class="logo" style="justify-content:center;margin-bottom:1rem;">
+                <div class="logo-symbol"><i data-lucide="apple"></i></div>
+                <span>Smart <span class="gradient-text">Diet</span></span>
+            </a>
+            <p class="text-muted" style="font-size:0.8rem;">&copy; 2026 Smart Diet Advisor. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+    // ── Load preferences ────────────────────────────────────────────────────
+    let userStr = localStorage.getItem('user');
+    let userId = 'default';
+    if (userStr) {
+        try {
+            const u = JSON.parse(userStr);
+            userId = u._id || u.email || userStr;
+        } catch (e) { userId = userStr; }
+    }
+
+    const prefs = JSON.parse(localStorage.getItem('dietPrefs_' + userId) || '{}');
+    const goal      = prefs.goal     || '';
+    const activity  = prefs.activity || '';
+    const health    = (prefs.health    || '').toLowerCase().trim();
+    const allergies = (prefs.allergies || '').toLowerCase().trim();
+    const weight    = parseFloat(prefs.weight)  || 70;
+    const height    = parseFloat(prefs.height)  || 170;
+    const age       = parseInt(prefs.age)        || 25;
+    const gender    = prefs.gender || 'male';
+
+    const actMap = { sedentary:'Sedentary', light:'Lightly Active', moderate:'Moderately Active', very:'Very Active' };
+    const actLabel = actMap[activity] || 'Moderate';
+
+    // ── Calorie maths ────────────────────────────────────────────────────────
+    const multMap = { sedentary:1.2, light:1.375, moderate:1.55, very:1.725 };
+    const bmr  = gender==='female'
+        ? 10*weight + 6.25*height - 5*age - 161
+        : 10*weight + 6.25*height - 5*age + 5;
+    const tdee = Math.round(bmr * (multMap[activity] || 1.55));
+    const calTarget  = goal==='Weight Management' ? tdee-400 : goal==='Muscle Gain' ? tdee+300 : tdee;
+    const protTarget = Math.round(weight * (goal==='Muscle Gain'?2.0 : goal==='Fitness Enhancement'?1.7 : 1.2));
+    const carbTarget = Math.round((calTarget * 0.44) / 4);
+    const fatTarget  = Math.round((calTarget * 0.30) / 9);
+    const waterL     = +(weight * 0.033).toFixed(1);
+
+    // ── Helpers ──────────────────────────────────────────────────────────────
+    const hasCondition = (...keys) => keys.some(k => health.includes(k));
+    const hasAllergy   = (...keys) => keys.some(k => allergies.includes(k) && !allergies.includes('none'));
+
+    function doItem(text, note='') {
+        return `<li class="rule-item"><div class="rule-bullet bullet-do">✓</div><div class="rule-text"><strong>${text}</strong>${note?`<span>${note}</span>`:''}</div></li>`;
+    }
+    function dontItem(text, note='') {
+        return `<li class="rule-item"><div class="rule-bullet bullet-dont">✕</div><div class="rule-text"><strong>${text}</strong>${note?`<span>${note}</span>`:''}</div></li>`;
+    }
+
+    // ── Build DOS based on goal ───────────────────────────────────────────────
+    function getDos() {
+        const base = [
+            doItem('Drink water throughout the day', `Target: ${waterL}–${+(waterL+0.5).toFixed(1)} liters daily`),
+            doItem('Eat 3 main meals + 1–2 healthy snacks', 'Consistent meal timing stabilises blood sugar'),
+            doItem('Include vegetables in every meal', 'Aim for at least 5 servings per day'),
+            doItem('Prioritise whole, unprocessed foods', 'Minimise packaged and refined food'),
+        ];
+
+        if (goal === 'Weight Management') {
+            base.push(
+                doItem('Create a 300–500 kcal daily deficit', `Your target: ~${calTarget} kcal/day (TDEE: ${tdee})`),
+                doItem('Eat high-volume, low-calorie foods', 'Salads, soups, leafy greens keep you full'),
+                doItem('Eat slowly and mindfully', 'Takes 20 min for your brain to register fullness'),
+                doItem('Prioritise protein at every meal', `Target ${protTarget}g/day — reduces hunger dramatically`),
+            );
+        } else if (goal === 'Muscle Gain') {
+            base.push(
+                doItem('Eat in a 300–500 kcal surplus', `Your target: ~${calTarget} kcal/day`),
+                doItem(`Hit ${protTarget}g of protein daily`, `~${Math.round(protTarget/3)}g per meal across 3 meals`),
+                doItem('Eat complex carbs pre/post workout', 'Oats, brown rice, banana, sweet potato'),
+                doItem('Have a protein meal within 45 min after training', 'Maximises muscle protein synthesis'),
+                doItem('Don\'t skip meals — eat every 3–4 hours', 'Consistent feeding supports anabolism'),
+            );
+        } else if (goal === 'Fitness Enhancement') {
+            base.push(
+                doItem('Fuel your workout with carbs 60 min before', 'Banana, oats, or toast work well'),
+                doItem(`Aim for ${protTarget}g protein daily`, 'Supports muscle recovery and adaptation'),
+                doItem('Replenish glycogen after cardio', 'Combine protein + carb within 45 min post-workout'),
+                doItem('Track hydration during exercise', 'Drink 150–250 ml every 20 min during activity'),
+            );
+        } else {
+            base.push(
+                doItem('Eat balanced meals with all 3 macros', 'Carbs, protein, and healthy fats at each meal'),
+                doItem('Eat a rainbow of fruits and vegetables', 'Diverse colors = diverse micronutrients'),
+                doItem('Include fermented foods for gut health', 'Yogurt, kimchi, kefir, buttermilk'),
+            );
+        }
+
+        // Condition-specific dos
+        if (hasCondition('diabet')) {
+            base.push(doItem('Choose low glycemic index (GI) foods', 'Oats, legumes, non-starchy veg, sweet potato'));
+            base.push(doItem('Eat smaller meals every 3–4 hours', 'Prevents blood sugar spikes and crashes'));
+        }
+        if (hasCondition('cholesterol','heart','cardiac')) {
+            base.push(doItem('Include Omega-3 rich foods daily', 'Salmon, flaxseed, walnuts, chia seeds'));
+            base.push(doItem('Eat oats for breakfast', 'Beta-glucan fibre lowers LDL cholesterol'));
+        }
+        if (hasCondition('hypertension','blood pressure','bp')) {
+            base.push(doItem('Follow a low-sodium diet', 'Keep sodium below 2,000 mg/day'));
+            base.push(doItem('Eat potassium-rich foods', 'Banana, avocado, sweet potato, spinach'));
+        }
+        if (hasAllergy('lactose')) {
+            base.push(doItem('Use lactose-free or plant-based dairy', 'Almond, oat, or coconut milk as substitutes'));
+        }
+        if (hasAllergy('gluten')) {
+            base.push(doItem('Choose certified gluten-free grains', 'Rice, quinoa, millet, buckwheat, corn'));
+        }
+
+        return base.join('');
+    }
+
+    // ── Build DONTS ──────────────────────────────────────────────────────────
+    function getDonts() {
+        const base = [
+            dontItem('Skip breakfast', 'Skipping meals increases overeating later'),
+            dontItem('Drink calories (soda, juice, alcohol)', 'These add empty calories without fullness'),
+            dontItem('Eat heavy meals after 9 PM', 'Late-night eating disrupts metabolism and sleep'),
+            dontItem('Eat ultra-processed or fried food daily', 'High trans fat, sodium, and empty carbs'),
+        ];
+
+        if (goal === 'Weight Management') {
+            base.push(
+                dontItem('Go on crash diets below 1,200 kcal', 'Destroys muscle mass and slows metabolism'),
+                dontItem('Avoid all carbs completely', 'Complex carbs are essential for brain and energy'),
+                dontItem('Eat out of boredom or stress', 'Identify emotional triggers and find non-food coping'),
+                dontItem('Weigh yourself more than once a week', 'Daily fluctuations are normal — focus on trends'),
+            );
+        } else if (goal === 'Muscle Gain') {
+            base.push(
+                dontItem('Train fasted without pre-workout nutrition', 'Leads to muscle breakdown (catabolism)'),
+                dontItem('Neglect carbohydrates', 'Carbs are the primary fuel for heavy training'),
+                dontItem('Eat junk food as a "bulk" strategy', 'Excess fat gain hinders long-term progress'),
+                dontItem('Overlook sleep and recovery', 'Muscles grow during rest, not in the gym'),
+            );
+        } else if (goal === 'Fitness Enhancement') {
+            base.push(
+                dontItem('Exercise on an empty stomach for long sessions', 'Causes energy crashes and muscle catabolism'),
+                dontItem('Rely on sports drinks unless doing 90+ min exercise', 'Adds unnecessary sugar for short workouts'),
+            );
+        } else {
+            base.push(
+                dontItem('Eat the same foods every day', 'Variety ensures broader micronutrient coverage'),
+                dontItem('Take unnecessary supplements without testing', 'Excess vitamins/minerals can be toxic'),
+            );
+        }
+
+        // Condition-specific donts
+        if (hasCondition('diabet')) {
+            base.push(dontItem('Eat white rice, bread, or sugary foods freely', 'High GI = rapid sugar spikes'));
+            base.push(dontItem('Skip meals or go long without eating', 'Can cause dangerous hypoglycaemia'));
+        }
+        if (hasCondition('cholesterol','heart','cardiac')) {
+            base.push(dontItem('Eat red meat more than 2×/week', 'High saturated fat raises LDL'));
+            base.push(dontItem('Consume trans fats (fried/packaged food)', 'Directly raises bad cholesterol'));
+        }
+        if (hasCondition('hypertension','blood pressure','bp')) {
+            base.push(dontItem('Add extra salt to food', 'Each gram of sodium raises blood pressure'));
+            base.push(dontItem('Drink alcohol regularly', 'Raises blood pressure and causes fluid retention'));
+        }
+        if (hasAllergy('nut','peanut')) {
+            base.push(dontItem('Eat mixed nuts, nut butters, or trail mix', 'Check all packaged foods for hidden nuts'));
+        }
+        if (hasAllergy('gluten')) {
+            base.push(dontItem('Eat wheat, barley, rye, or regular oats', 'Always look for a "gluten-free" certification label'));
+        }
+
+        return base.join('');
+    }
+
+    // ── Daily schedule ───────────────────────────────────────────────────────
+    function getSchedule() {
+        const base = [
+            { time:'7:00 – 8:00 AM', emoji:'🌅', meal:'Wake-up Hydration', desc:'Drink 500ml warm water. Optional: lemon or jeera water.' },
+        ];
+
+        if (goal === 'Muscle Gain' || goal === 'Fitness Enhancement') {
+            base.push({ time:'8:00 AM', emoji:'🍳', meal:'Breakfast — High Protein', desc:`Eggs + oats + milk OR protein smoothie. Target: ${Math.round(protTarget*0.28)}g protein.` });
+        } else if (goal === 'Weight Management') {
+            base.push({ time:'8:00 AM', emoji:'🥚', meal:'Breakfast — Filling & Light', desc:'Veggie omelette or oatmeal with fruit. Keeps you full till lunch.' });
+        } else {
+            base.push({ time:'8:00 AM', emoji:'🥣', meal:'Breakfast — Balanced Start', desc:'Oats with fruits and nuts, or eggs with whole grain toast.' });
+        }
+
+        if (goal === 'Fitness Enhancement') {
+            base.push({ time:'10:30 AM', emoji:'🍌', meal:'Pre-Workout Snack', desc:'Light carb 30–60 min before training. Banana + handful of nuts.' });
+        } else {
+            base.push({ time:'10:30 AM', emoji:'🍎', meal:'Mid-Morning Snack (optional)', desc:'Fruit or a small handful of nuts. Keep it under 150 kcal.' });
+        }
+
+        if (goal === 'Muscle Gain') {
+            base.push({ time:'1:00 PM', emoji:'🍗', meal:'Lunch — Largest Meal', desc:`Chicken/fish + rice/roti + vegetables. ~${Math.round(protTarget*0.3)}g protein target.` });
+        } else if (goal === 'Weight Management') {
+            base.push({ time:'12:30 PM', emoji:'🥗', meal:'Lunch — Protein + Fibre Focus', desc:`Grilled protein + big salad + small portion of complex carb. ~${Math.round(calTarget*0.35)} kcal.` });
+        } else {
+            base.push({ time:'12:30 PM', emoji:'🍱', meal:'Lunch — Full Balanced Plate', desc:'Roti/rice + dal/protein + 2 vegetable dishes + salad.' });
+        }
+
+        base.push({ time:'4:00 – 5:00 PM', emoji:'☕', meal:'Evening Snack', desc:'Greek yogurt, boiled egg, roasted chana, or fresh fruit. Avoid biscuits.' });
+
+        if (goal === 'Fitness Enhancement') {
+            base.push({ time:'Post-Workout', emoji:'💪', meal:'Post-Workout Recovery Meal', desc:`Within 45 min: protein + carbs. Whey + banana OR chicken + rice. ~${Math.round(protTarget*0.25)}g protein.` });
+        }
+
+        if (goal === 'Weight Management') {
+            base.push({ time:'7:30 PM', emoji:'🐟', meal:'Dinner — Light & Early', desc:'Lean protein (fish/chicken/tofu) + steamed vegetables. Minimal carbs.' });
+        } else if (goal === 'Muscle Gain') {
+            base.push({ time:'7:30 PM', emoji:'🍝', meal:'Dinner — Complete Meal', desc:`Full macros: protein + carb + veg. Target ~${Math.round(protTarget*0.28)}g protein.` });
+        } else {
+            base.push({ time:'7:30 PM', emoji:'🥘', meal:'Dinner — Warm & Digestible', desc:'Dal + sabzi + roti, or soup + protein. Eat at least 2 hrs before sleep.' });
+        }
+
+        base.push({ time:'9:00 – 10:00 PM', emoji:'🌙', meal:'Optional Bedtime Snack', desc:
+            goal==='Muscle Gain'
+                ? 'Casein-rich snack: paneer, cottage cheese, or warm milk. Supports overnight muscle repair.'
+                : 'Herbal tea or a small handful of almonds if hungry. Avoid heavy meals.' });
+
+        return base.map(s => `
+            <div class="schedule-item">
+                <div class="schedule-time">${s.time}</div>
+                <div class="meal-dot"></div>
+                <div>
+                    <div class="schedule-meal">${s.emoji} ${s.meal}</div>
+                    <div class="schedule-desc">${s.desc}</div>
+                </div>
+            </div>`).join('');
+    }
+
+    // ── Condition alerts ─────────────────────────────────────────────────────
+    function getAlerts() {
+        const alerts = [];
+        if (hasCondition('diabet')) {
+            alerts.push(`<div class="condition-alert alert-warn">
+                <div class="alert-icon">🩺</div>
+                <div>
+                    <div class="alert-title">Diabetes Diet Protocol Active</div>
+                    <div class="alert-body">Your plan prioritises low glycemic index foods, regular small meals, and controlled carbohydrate portions to manage blood sugar. Avoid refined sugar, white rice, and sweet drinks. Consult your endocrinologist regularly.</div>
+                </div>
+            </div>`);
+        }
+        if (hasCondition('cholesterol','heart','cardiac')) {
+            alerts.push(`<div class="condition-alert alert-warn">
+                <div class="alert-icon">❤️</div>
+                <div>
+                    <div class="alert-title">Heart Health Protocol Active</div>
+                    <div class="alert-body">Your plan emphasises Omega-3 rich foods, soluble fibre (oats, legumes), and strict avoidance of trans fats and excess saturated fat. Keep sodium below 2,000 mg/day. Regular monitoring of LDL/HDL is recommended.</div>
+                </div>
+            </div>`);
+        }
+        if (hasCondition('hypertension','blood pressure','bp')) {
+            alerts.push(`<div class="condition-alert alert-info">
+                <div class="alert-icon">💊</div>
+                <div>
+                    <div class="alert-title">Hypertension Diet Protocol Active</div>
+                    <div class="alert-body">Following a low-sodium, DASH-style diet. Increase potassium (banana, avocado, spinach), magnesium (nuts, seeds), and calcium (dairy, greens). Limit alcohol and caffeine. Avoid adding salt at the table.</div>
+                </div>
+            </div>`);
+        }
+        if (hasAllergy('gluten')) {
+            alerts.push(`<div class="condition-alert alert-info">
+                <div class="alert-icon">⚠️</div>
+                <div>
+                    <div class="alert-title">Gluten-Free Protocol Active</div>
+                    <div class="alert-body">All meal suggestions exclude wheat, barley, and rye. Safe grains: rice, quinoa, millet, buckwheat. Always verify "certified gluten-free" on packaged food labels to avoid cross-contamination.</div>
+                </div>
+            </div>`);
+        }
+        if (hasAllergy('lactose')) {
+            alerts.push(`<div class="condition-alert alert-info">
+                <div class="alert-icon">🥛</div>
+                <div>
+                    <div class="alert-title">Lactose-Free Protocol Active</div>
+                    <div class="alert-body">Dairy is replaced with plant-based alternatives (almond, oat, coconut milk). Calcium needs are met via broccoli, almonds, fortified plant milks, and sesame seeds. Consider a Calcium + D3 supplement.</div>
+                </div>
+            </div>`);
+        }
+        return alerts.join('');
+    }
+
+    // ── Render all content ───────────────────────────────────────────────────
+    const mainEl = document.getElementById('mainContent');
+
+    if (!goal) {
+        mainEl.innerHTML = `
+            <div class="no-prefs glass-card animate-up">
+                <div style="font-size:4rem;margin-bottom:1rem;">📋</div>
+                <h2 style="margin-bottom:0.75rem;">No Preferences Found</h2>
+                <p class="text-muted" style="margin-bottom:2rem;max-width:450px;">Complete your health assessment first. We'll use your details to generate personalised dietary rules for you.</p>
+                <a href="./assessment.html" class="btn btn-primary">Start Assessment <i data-lucide="arrow-right"></i></a>
+            </div>`;
+        lucide.createIcons();
+    } else {
+
+    // Build profile tags
+    const tags = [
+        `<span class="profile-tag">🎯 ${goal}</span>`,
+        `<span class="profile-tag blue">⚡ ${actLabel}</span>`,
+        weight ? `<span class="profile-tag orange">⚖️ ${weight} kg</span>` : '',
+        height ? `<span class="profile-tag orange">📏 ${height} cm</span>` : '',
+        health && health !== 'none' && health !== '' ? `<span class="profile-tag red">🩺 ${prefs.health}</span>` : '',
+        allergies && allergies !== 'none' && allergies !== ''
+            ? `<span class="profile-tag red">🚫 Allergies: ${prefs.allergies}</span>` : '',
+    ].filter(Boolean).join('');
+
+    mainEl.innerHTML = `
+        <!-- Page Header -->
+        <div class="animate-up" style="margin-bottom:0.5rem;">
+            <h1 style="font-size:2.2rem;">📋 My <span class="gradient-text">Dietary Rules</span></h1>
+            <p class="text-muted" style="margin-top:0.4rem;">Personalised guidelines generated from your health assessment.</p>
+        </div>
+        <div class="profile-strip">${tags}</div>
+
+        <!-- Alerts for conditions -->
+        ${getAlerts()}
+
+        <!-- Key daily numbers -->
+        <div class="numbers-grid animate-up">
+            <div class="number-card">
+                <div class="number-val">${calTarget}</div>
+                <div class="number-lbl">kcal / day</div>
+            </div>
+            <div class="number-card">
+                <div class="number-val">${protTarget}g</div>
+                <div class="number-lbl">Protein / day</div>
+            </div>
+            <div class="number-card">
+                <div class="number-val">${carbTarget}g</div>
+                <div class="number-lbl">Carbs / day</div>
+            </div>
+            <div class="number-card">
+                <div class="number-val">${waterL} L</div>
+                <div class="number-lbl">Water / day</div>
+            </div>
+        </div>
+
+        <!-- Dos and Don'ts -->
+        <div class="rules-grid animate-up">
+            <div class="glass-card">
+                <div class="section-strip">
+                    <div class="section-strip-icon icon-green">✅</div>
+                    <div>
+                        <h3 style="font-size:1.1rem;">What To Do</h3>
+                        <p style="font-size:0.8rem;color:var(--text-muted);">Follow these rules daily</p>
+                    </div>
+                </div>
+                <ul class="rule-list">${getDos()}</ul>
+            </div>
+            <div class="glass-card">
+                <div class="section-strip">
+                    <div class="section-strip-icon icon-red">🚫</div>
+                    <div>
+                        <h3 style="font-size:1.1rem;">What To Avoid</h3>
+                        <p style="font-size:0.8rem;color:var(--text-muted);">Habits that work against your goal</p>
+                    </div>
+                </div>
+                <ul class="rule-list">${getDonts()}</ul>
+            </div>
+        </div>
+
+        <!-- Daily Schedule -->
+        <div class="glass-card animate-up" style="margin-bottom:2rem;">
+            <div class="section-strip" style="margin-bottom:1.5rem;">
+                <div class="section-strip-icon icon-blue">⏰</div>
+                <div>
+                    <h3 style="font-size:1.1rem;">Recommended Daily Meal Schedule</h3>
+                    <p style="font-size:0.8rem;color:var(--text-muted);">Tailored to your goal: <strong>${goal}</strong></p>
+                </div>
+            </div>
+            <div class="schedule-wrap">${getSchedule()}</div>
+        </div>
+
+        <!-- Action buttons -->
+        <div class="animate-up" style="display:flex;gap:1rem;flex-wrap:wrap;">
+            <a href="./tracker.html" class="btn btn-primary">
+                <i data-lucide="clipboard-list"></i> Log Today's Food
+            </a>
+            <a href="./chat.html" class="btn btn-secondary">
+                <i data-lucide="message-circle"></i> Ask Diet AI
+            </a>
+            <a href="./assessment.html" class="btn btn-secondary">
+                <i data-lucide="settings"></i> Update Preferences
+            </a>
+        </div>
+    `;
+
+    lucide.createIcons();
+    }
+    </script>
+</body>
+</html>

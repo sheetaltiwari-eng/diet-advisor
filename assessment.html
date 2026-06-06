@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script>
+        if (!localStorage.getItem('token') && !localStorage.getItem('user')) {
+            window.location.href = './login.html';
+        }
+    </script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Diet Advisor | Assessment</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    
+    <!-- Main Style -->
+    <link rel="stylesheet" href="./styles/main.css">
+    
+    <style>
+        .assessment-page {
+            padding-top: 120px;
+            padding-bottom: 60px;
+            min-height: 100vh;
+        }
+
+        .assessment-card {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 3rem;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .form-section {
+            margin-bottom: 3rem;
+        }
+
+        .section-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            text-align: left;
+        }
+
+        .form-group {
+            text-align: left;
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .input-field {
+            width: 100%;
+            padding: 1rem 1.25rem;
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.7);
+            border: 1px solid var(--glass-border);
+            color: var(--text-main);
+            font-family: inherit;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .input-field:focus {
+            outline: none;
+            border-color: var(--primary);
+            background: rgba(255, 255, 255, 0.9);
+            box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.2);
+        }
+
+        .wide {
+            grid-column: span 2;
+        }
+
+        .goal-options {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .goal-btn {
+            padding: 1.5rem;
+            border-radius: 16px;
+            background: rgba(255, 255, 255, 0.5);
+            border: 1px solid var(--glass-border);
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: left;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            font-weight: 600;
+        }
+
+        .goal-btn:hover {
+            background: rgba(255, 255, 255, 0.8);
+            border-color: var(--secondary);
+        }
+
+        .goal-btn.active {
+            background: rgba(16, 185, 129, 0.15);
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        @media (max-width: 768px) {
+            .form-grid { grid-template-columns: 1fr; }
+            .wide { grid-column: span 1; }
+            .goal-options { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Floating Fruit/Veg Icons Background -->
+    <div style="position: fixed; inset: 0; z-index: -1; pointer-events: none; opacity: 0.5; overflow: hidden;">
+        <!-- Floating Salad Bowls -->
+        <div class="floating-icon" style="top: 10%; left: 5%; font-size: 6rem; opacity: 0.6; animation-delay: 0s;">🥗</div>
+        <div class="floating-icon reverse" style="bottom: 10%; right: 5%; font-size: 7rem; opacity: 0.5; animation-delay: 1s;">🥗</div>
+        
+        <!-- Smaller Fruits/Veg -->
+        <div class="floating-icon reverse" style="top: 15%; right: 20%; font-size: 4rem; animation-delay: 2s;">🍎</div>
+        <div class="floating-icon" style="bottom: 30%; left: 15%; font-size: 5rem; animation-delay: 1.5s;">🥕</div>
+        <div class="floating-icon reverse" style="top: 40%; left: 25%; font-size: 4.5rem; animation-delay: 3s;">🥑</div>
+        <div class="floating-icon" style="top: 25%; left: 45%; font-size: 3rem; animation-delay: 0.5s;">🥦</div>
+        <div class="floating-icon reverse" style="bottom: 15%; right: 30%; font-size: 4rem; animation-delay: 2.5s;">🍇</div>
+        <div class="floating-icon" style="top: 60%; right: 35%; font-size: 3.5rem; animation-delay: 4s;">🍊</div>
+    </div>
+
+    <header>
+        <div class="container nav-content">
+            <nav>
+                <a href="./index.html" class="logo">
+                    <div class="logo-symbol">
+                        <i data-lucide="apple"></i>
+                    </div>
+                </a>
+                <a href="./index.html" class="btn btn-secondary btn-sm">Home</a>
+            </nav>
+        </div>
+    </header>
+
+    <div class="assessment-page container">
+        <div class="glass-card assessment-card animate-up">
+            <div style="text-align: center;">
+                <h1 class="gradient-text">Personalize Your Plan</h1>
+                <p class="text-muted">Analyzing your health metrics for a tailored diet solution.</p>
+            </div>
+
+            <form id="assessmentForm">
+                <div class="form-grid">
+                    <!-- Basic Stats -->
+                    <div class="form-section">
+                        <div class="section-title"><i data-lucide="user"></i> Basic Details</div>
+                        <div class="form-group">
+                            <label for="age">Age / DOB</label>
+                            <input type="text" id="age" class="input-field" placeholder="e.g. 25 or YYYY-MM-DD" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="gender">Gender</label>
+                            <select id="gender" class="input-field">
+                                <option value="male">Male</option>
+                                <option value="female">Female</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Metrics -->
+                    <div class="form-section">
+                        <div class="section-title"><i data-lucide="ruler"></i> Physical Metrics</div>
+                        <div class="form-group">
+                            <label for="height">Height (cm)</label>
+                            <input type="number" id="height" class="input-field" placeholder="175" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="weight">Weight (kg)</label>
+                            <input type="number" id="weight" class="input-field" placeholder="70" required>
+                        </div>
+                    </div>
+
+                    <!-- Lifestyle & Health (The user's description mentions health conditions) -->
+                    <div class="form-section wide">
+                        <div class="section-title"><i data-lucide="activity"></i> Lifestyle & Health</div>
+                        <div class="grid-2">
+                            <div class="form-group">
+                                <label for="activity">Activity Level</label>
+                                <select id="activity" class="input-field">
+                                    <option value="sedentary">Sedentary (Office job)</option>
+                                    <option value="light">Light (1-2 days/week)</option>
+                                    <option value="moderate">Moderate (3-5 days/week)</option>
+                                    <option value="very">Very Active (Daily)</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="health">Medical Conditions</label>
+                                <input type="text" id="health" class="input-field" placeholder="None, Diabetes, etc.">
+                            </div>
+                        </div>
+                        <div class="form-group" style="margin-top: 1.5rem;">
+                            <label for="allergies">Allergies</label>
+                            <input type="text" id="allergies" class="input-field" placeholder="None, Peanuts, Gluten, etc.">
+                        </div>
+                    </div>
+
+                    <!-- Goals -->
+                    <div class="form-section wide">
+                        <div class="section-title"><i data-lucide="target"></i> Your Main Goal</div>
+                        <div class="goal-options">
+                            <div class="goal-btn active" onclick="selectGoal(this)">
+                                <i data-lucide="trending-down"></i> Weight Management
+                            </div>
+                            <div class="goal-btn" onclick="selectGoal(this)">
+                                <i data-lucide="zap"></i> Fitness Enhancement
+                            </div>
+                            <div class="goal-btn" onclick="selectGoal(this)">
+                                <i data-lucide="heart"></i> General Wellness
+                            </div>
+                            <div class="goal-btn" onclick="selectGoal(this)">
+                                <i data-lucide="plus"></i> Muscle Gain
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="text-align: center; margin-top: 2rem;">
+                    <button type="submit" class="btn btn-primary btn-lg" style="width: 100%;">
+                        Generate My Diet Plan <i data-lucide="sparkles"></i>
+                    </button>
+                    <p class="text-muted" style="font-size: 0.8rem; margin-top: 1rem;">Our AI analyzes 50+ data points for accuracy.</p>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer style="padding: 4rem 0; text-align: center; border-top: 1px solid var(--glass-border);">
+        <div class="container">
+            <a href="./index.html" class="logo" style="justify-content: center; margin-bottom: 1.5rem;">
+                <div class="logo-symbol">
+                    <i data-lucide="apple"></i>
+                </div>
+                <span>Smart <span class="gradient-text">Diet</span></span>
+            </a>
+            <p class="text-muted" style="max-width: 500px; margin: 0 auto 2rem auto;">
+                Improving awareness of nutrition for better health outcomes through efficient data management and user-friendly interaction.
+            </p>
+            <div class="nav-links" style="justify-content: center; margin-bottom: 2rem;">
+                <a href="#">About</a>
+                <a href="#">Privacy</a>
+                <a href="#">Terms</a>
+                <a href="#">Contact</a>
+            </div>
+            <p class="text-muted" style="font-size: 0.8rem;">&copy; 2026 Smart Diet Advisor. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        lucide.createIcons();
+
+        function selectGoal(el) {
+            document.querySelectorAll('.goal-btn').forEach(b => b.classList.remove('active'));
+            el.classList.add('active');
+        }
+
+        document.getElementById('assessmentForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const activeGoalBtn = document.querySelector('.goal-btn.active');
+            const prefs = {
+                age: document.getElementById('age').value,
+                gender: document.getElementById('gender').value,
+                height: document.getElementById('height').value,
+                weight: document.getElementById('weight').value,
+                activity: document.getElementById('activity').value,
+                health: document.getElementById('health').value,
+                allergies: document.getElementById('allergies').value,
+                goal: activeGoalBtn ? activeGoalBtn.innerText.trim() : 'General Wellness'
+            };
+
+            // User isolation
+            let userStr = localStorage.getItem('user');
+            let userId = 'default';
+            if (userStr) {
+                try { userId = JSON.parse(userStr)._id || JSON.parse(userStr).email || userStr; } 
+                catch(e) { userId = userStr; }
+            }
+            localStorage.setItem('dietPrefs_' + userId, JSON.stringify(prefs));
+            window.location.href = './dashboard.html';
+        });
+    </script>
+</body>
+</html>

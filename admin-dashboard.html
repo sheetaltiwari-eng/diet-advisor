@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Diet Advisor | Admin Dashboard</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    
+    <!-- Main Style -->
+    <link rel="stylesheet" href="./styles/main.css">
+    
+    <style>
+        .admin-page {
+            padding-top: 100px;
+            padding-bottom: 60px;
+            min-height: 100vh;
+        }
+
+        .admin-header {
+            margin-bottom: 3rem;
+        }
+
+        .admin-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+        }
+
+        .stat-card-glass {
+            padding: 2rem;
+            text-align: center;
+        }
+
+        .stat-icon-bg {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1rem;
+        }
+
+        .stat-card-glass h3 {
+            font-size: 2rem;
+            font-weight: 800;
+            margin-bottom: 0.25rem;
+        }
+
+        .stat-card-glass p {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .admin-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 2rem;
+        }
+
+        .data-card {
+            padding: 2rem;
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        .table-wrap {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+        }
+
+        th {
+            padding: 1rem;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-muted);
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        td {
+            padding: 1.5rem 1rem;
+            border-bottom: 1px solid var(--glass-border);
+            vertical-align: middle;
+        }
+
+        .user-tag {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .user-init {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            background: var(--gradient);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 0.9rem;
+        }
+
+        .status-badge {
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: 700;
+        }
+
+        .status-active { background: rgba(16, 185, 129, 0.1); color: #10b981; }
+
+        .loading-overlay {
+            position: fixed;
+            inset: 0;
+            background: var(--bg-main);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+        }
+    </style>
+</head>
+<body>
+    <div id="loader" class="loading-overlay">
+        <div style="text-align: center;">
+            <i data-lucide="loader" class="animate-spin" style="width: 48px; height: 48px; color: var(--primary);"></i>
+            <p style="margin-top: 1.5rem; font-weight: 600;">Securely loading admin data...</p>
+        </div>
+    </div>
+
+    <!-- Background -->
+    <div style="position: fixed; inset: 0; z-index: -1; pointer-events: none; opacity: 0.5; overflow: hidden;">
+        <div class="floating-icon" style="top: 10%; left: 5%; font-size: 6rem;">🛡️</div>
+        <div class="floating-icon reverse" style="bottom: 10%; right: 5%; font-size: 7rem;">📊</div>
+    </div>
+
+    <header class="scrolled">
+        <div class="container nav-content">
+            <nav>
+                <a href="./index.html" class="logo">
+                    <div class="logo-symbol">
+                        <i data-lucide="apple"></i>
+                    </div>
+                    <span>Smart <span class="gradient-text">Admin</span></span>
+                </a>
+                
+                <div class="nav-links">
+                    <a href="#overview" class="active">Overview</a>
+                    <a href="#users">User List</a>
+                    <a href="#assessments">Assessments</a>
+                    <a href="#feedback">Feedback</a>
+                    <a href="#" onclick="logout()" class="btn btn-secondary btn-sm">Sign Out</a>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <main class="admin-page container">
+        <div class="admin-header">
+            <h1>Admin <span class="gradient-text">Dashboard</span></h1>
+            <p class="text-muted">Monitor and manage the Smart Diet Advisor ecosystem.</p>
+        </div>
+
+        <div class="admin-stats">
+            <div class="glass-card stat-card-glass">
+                <div class="stat-icon-bg"><i data-lucide="users"></i></div>
+                <h3 id="statTotalUsers">0</h3>
+                <p>Total Registered Users</p>
+            </div>
+            <div class="glass-card stat-card-glass">
+                <div class="stat-icon-bg" style="background: rgba(59, 130, 246, 0.1); color: #3b82f6;"><i data-lucide="clipboard-check"></i></div>
+                <h3 id="statTotalAssessments">0</h3>
+                <p>Health Assessments</p>
+            </div>
+            <div class="glass-card stat-card-glass">
+                <div class="stat-icon-bg" style="background: rgba(245, 158, 11, 0.1); color: #f59e0b;"><i data-lucide="star"></i></div>
+                <h3 id="statAvgRating">0</h3>
+                <p>Average User Rating</p>
+            </div>
+            <div class="glass-card stat-card-glass">
+                <div class="stat-icon-bg" style="background: rgba(139, 92, 246, 0.1); color: #8b5cf6;"><i data-lucide="trending-up"></i></div>
+                <h3 id="statTotalFeedback">0</h3>
+                <p>Feedback Submissions</p>
+            </div>
+        </div>
+
+        <div class="admin-grid">
+            <!-- Recent Users Section -->
+            <section id="users" class="glass-card data-card">
+                <div class="card-header">
+                    <h2><i data-lucide="users" style="vertical-align: middle; margin-right: 0.5rem; color: var(--primary);"></i> Recent Signups</h2>
+                    <button class="btn btn-secondary btn-sm">View All</button>
+                </div>
+                <div class="table-wrap">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>User</th>
+                                <th>Email</th>
+                                <th>Status</th>
+                                <th>Registered</th>
+                            </tr>
+                        </thead>
+                        <tbody id="userTableBody">
+                            <!-- Populated dynamically -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Recent Feedback Section -->
+            <section id="feedback" class="glass-card data-card">
+                <div class="card-header">
+                    <h2><i data-lucide="message-square" style="vertical-align: middle; margin-right: 0.5rem; color: #3b82f6;"></i> Latest Feedback</h2>
+                </div>
+                <div class="table-wrap">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Rating</th>
+                                <th>Comments</th>
+                            </tr>
+                        </thead>
+                        <tbody id="feedbackTableBody">
+                            <!-- Populated dynamically -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <footer style="padding: 4rem 0; text-align: center; border-top: 1px solid var(--glass-border);">
+        <p class="text-muted" style="font-size: 0.9rem;">&copy; 2026 Admin Portal | Smart Diet Advisor</p>
+    </footer>
+
+    <script>
+        // Security Check
+        if (localStorage.getItem('isAdmin') !== 'true') {
+            window.location.href = './admin-login.html';
+        }
+
+        lucide.createIcons();
+
+        async function fetchAdminData() {
+            try {
+                const [statsRes, userRes, feedRes] = await Promise.all([
+                    fetch('http://localhost:5000/api/admin/stats'),
+                    fetch('http://localhost:5000/api/admin/users'),
+                    fetch('http://localhost:5000/api/feedbacks')
+                ]);
+
+                const stats = await statsRes.json();
+                const users = await userRes.json();
+                const feedbacks = await feedRes.json();
+
+                // Populate Stats
+                document.getElementById('statTotalUsers').textContent = stats.stats.totalUsers;
+                document.getElementById('statTotalAssessments').textContent = stats.stats.totalAssessments;
+                document.getElementById('statAvgRating').textContent = stats.stats.avgRating + '/5';
+                document.getElementById('statTotalFeedback').textContent = feedbacks.length;
+
+                // Populate Users Table
+                const userTbody = document.getElementById('userTableBody');
+                userTbody.innerHTML = users.slice(0, 5).map(u => `
+                    <tr>
+                        <td>
+                            <div class="user-tag">
+                                <div class="user-init">${u.name.charAt(0)}</div>
+                                <span>${u.name}</span>
+                            </div>
+                        </td>
+                        <td>${u.email}</td>
+                        <td><span class="status-badge status-active">Active</span></td>
+                        <td>${new Date(u.createdAt).toLocaleDateString()}</td>
+                    </tr>
+                `).join('');
+
+                // Populate Feedback Table
+                const feedTbody = document.getElementById('feedbackTableBody');
+                feedTbody.innerHTML = feedbacks.slice(0, 5).map(f => `
+                    <tr>
+                        <td><strong>${f.name}</strong></td>
+                        <td>${f.email}</td>
+                        <td><span class="status-badge status-active" style="background:rgba(59,130,246,0.1); color:#3b82f6;">${f.rating} / 5</span></td>
+                        <td style="color:var(--text-muted); font-size:0.85rem; max-width: 300px;">${f.feedback}</td>
+                    </tr>
+                `).join('');
+
+                document.getElementById('loader').style.display = 'none';
+            } catch (err) {
+                console.error('Data fetch error:', err);
+                document.getElementById('loader').style.display = 'none';
+            }
+        }
+
+        function logout() {
+            localStorage.clear();
+            window.location.href = './index.html';
+        }
+
+        window.onload = fetchAdminData;
+    </script>
+</body>
+</html>

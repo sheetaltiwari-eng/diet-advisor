@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script>
+        if (!localStorage.getItem('token') && !localStorage.getItem('user')) {
+            window.location.href = './login.html';
+        }
+    </script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Diet Advisor | Expert Chat</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    
+    <!-- Main Style -->
+    <link rel="stylesheet" href="./styles/main.css">
+    
+    <style>
+        .chat-page {
+            padding-top: 100px;
+            padding-bottom: 40px;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            box-sizing: border-box;
+        }
+
+        .chat-container {
+            flex: 1;
+            min-height: 0;          /* KEY: lets flex child shrink so overflow works */
+            display: grid;
+            grid-template-columns: 350px 1fr;
+            border-radius: 24px;
+            overflow: hidden;
+            margin-bottom: 2rem;
+        }
+
+        /* Sidebar */
+        .chat-sidebar {
+            background: rgba(255, 255, 255, 0.6);
+            border-right: 1px solid var(--glass-border);
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+
+        .expert-card {
+            padding: 1rem;
+            border-radius: 16px;
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid var(--primary);
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .expert-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            background: var(--gradient);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+        }
+
+        .expert-name {
+            font-weight: 700;
+            font-size: 1rem;
+        }
+
+        .expert-status {
+            font-size: 0.8rem;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        /* Main Chat Area */
+        .chat-main {
+            display: flex;
+            flex-direction: column;
+            background: rgba(255, 255, 255, 0.4);
+            min-height: 0;          /* KEY: allows children to scroll */
+            overflow: hidden;
+        }
+
+        .chat-header {
+            padding: 1.5rem 2rem;
+            border-bottom: 1px solid var(--glass-border);
+            background: rgba(255, 255, 255, 0.6);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .chat-messages {
+            flex: 1;
+            min-height: 0;          /* KEY: allows the flex child to shrink & scroll */
+            padding: 2rem;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            scroll-behavior: smooth;
+        }
+
+        /* Custom scrollbar */
+        .chat-messages::-webkit-scrollbar { width: 5px; }
+        .chat-messages::-webkit-scrollbar-track { background: transparent; }
+        .chat-messages::-webkit-scrollbar-thumb { background: rgba(16, 185, 129,0.4); border-radius: 10px; }
+        .chat-messages::-webkit-scrollbar-thumb:hover { background: var(--primary); }
+
+        .message {
+            max-width: 70%;
+            padding: 1.25rem 1.5rem;
+            border-radius: 20px;
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
+
+        .message.expert {
+            align-self: flex-start;
+            background: var(--bg-card);
+            border-bottom-left-radius: 4px;
+        }
+
+        .message.user {
+            align-self: flex-end;
+            background: var(--gradient);
+            color: white;
+            border-bottom-right-radius: 4px;
+        }
+
+        .message-time {
+            font-size: 0.75rem;
+            margin-top: 0.5rem;
+            opacity: 0.6;
+            display: block;
+            text-align: right;
+        }
+
+        /* Footer / Input */
+        .chat-footer {
+            padding: 1.5rem 2rem;
+            background: rgba(255, 255, 255, 0.6);
+            border-top: 1px solid var(--glass-border);
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+            flex-shrink: 0;         /* Never squishes — always visible */
+        }
+
+        .chat-input {
+            flex: 1;
+            background: rgba(255, 255, 255, 0.8);
+            border: 1px solid var(--glass-border);
+            border-radius: 30px;
+            padding: 0.875rem 1.5rem;
+            color: var(--text-main);
+            font-family: inherit;
+        }
+
+        .chat-input:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .send-btn {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: var(--gradient);
+            border: none;
+            color: white;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .send-btn:hover {
+            transform: scale(1.1);
+        }
+
+        @media (max-width: 800px) {
+            .chat-container { grid-template-columns: 1fr; }
+            .chat-sidebar { display: none; }
+            .chat-page { padding-top: 80px; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Floating Fruit/Veg Icons Background -->
+    <div style="position: fixed; inset: 0; z-index: -1; pointer-events: none; opacity: 0.5; overflow: hidden;">
+        <!-- Floating Salad Bowls -->
+        <div class="floating-icon" style="top: 10%; left: 5%; font-size: 6rem; opacity: 0.6; animation-delay: 0s;">🥗</div>
+        <div class="floating-icon reverse" style="bottom: 10%; right: 5%; font-size: 7rem; opacity: 0.5; animation-delay: 1s;">🥗</div>
+        
+        <!-- Smaller Fruits/Veg -->
+        <div class="floating-icon reverse" style="top: 15%; right: 20%; font-size: 4rem; animation-delay: 2s;">🍎</div>
+        <div class="floating-icon" style="bottom: 30%; left: 15%; font-size: 5rem; animation-delay: 1.5s;">🥕</div>
+        <div class="floating-icon reverse" style="top: 40%; left: 25%; font-size: 4.5rem; animation-delay: 3s;">🥑</div>
+        <div class="floating-icon" style="top: 25%; left: 45%; font-size: 3rem; animation-delay: 0.5s;">🥦</div>
+        <div class="floating-icon reverse" style="bottom: 15%; right: 30%; font-size: 4rem; animation-delay: 2.5s;">🍇</div>
+        <div class="floating-icon" style="top: 60%; right: 35%; font-size: 3.5rem; animation-delay: 4s;">🍊</div>
+    </div>
+
+    <header class="scrolled">
+        <div class="container nav-content">
+            <nav>
+                <a href="./index.html" class="logo">
+                    <div class="logo-symbol">
+                        <i data-lucide="apple"></i>
+                    </div>
+                    <span>Smart <span class="gradient-text">Diet</span></span>
+                </a>
+                
+                <div class="nav-links">
+                    <a href="./dashboard.html">Daily Track</a>
+                    <a href="./tracker.html">Food Tracker</a>
+                    <a href="./diet-rules.html">Diet Rules</a>
+                    <a href="./chat.html" class="active">Expert Chat</a>
+                    <a href="#" onclick="localStorage.removeItem('user'); localStorage.removeItem('token'); window.location.href='./index.html';" class="btn btn-secondary btn-sm">Sign Out</a>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <div class="chat-page container">
+        <div class="glass-card chat-container animate-up">
+            <!-- Sidebar -->
+            <aside class="chat-sidebar">
+                <h3 style="margin-bottom: 0.5rem;">Nutritionists</h3>
+                
+                <div class="expert-card">
+                    <div class="expert-avatar">SJ</div>
+                    <div>
+                        <div class="expert-name">Dr. Sarah Johnson</div>
+                        <div class="expert-status"><i data-lucide="circle" style="width: 8px; height: 8px; fill: var(--primary); stroke: none;"></i> Active Now</div>
+                    </div>
+                </div>
+
+                <div class="expert-card" style="background: transparent; border-color: rgba(16, 185, 129, 0.2);">
+                    <div class="expert-avatar" style="background: var(--secondary);">MW</div>
+                    <div>
+                        <div class="expert-name">Mark Wilson (Coach)</div>
+                        <div class="expert-status" style="color: var(--text-muted);"><i data-lucide="clock" style="width: 10px;"></i> Offline</div>
+                    </div>
+                </div>
+            </aside>
+
+            <!-- Main Chat Area -->
+            <main class="chat-main">
+                <header class="chat-header">
+                    <div>
+                        <h4 style="font-weight: 700;">Sarah Johnson</h4>
+                        <p class="text-muted" style="font-size: 0.75rem;">Sports Nutritionist | 10+ years experience</p>
+                    </div>
+                    <div>
+                        <i data-lucide="phone" style="margin-right: 1rem; color: var(--text-muted); cursor: pointer;"></i>
+                        <i data-lucide="video" style="color: var(--text-muted); cursor: pointer;"></i>
+                    </div>
+                </header>
+
+                <!-- Quick suggestion chips -->
+                <div id="quickChips" style="padding: 0.75rem 2rem; display:flex; gap:0.5rem; flex-wrap:wrap; border-bottom: 1px solid var(--glass-border); background: rgba(255,255,255,0.4);">
+                    <span class="chip" onclick="askChip(this)">🔥 How many calories should I eat?</span>
+                    <span class="chip" onclick="askChip(this)">💧 How much water per day?</span>
+                    <span class="chip" onclick="askChip(this)">🥗 Best foods for weight loss</span>
+                    <span class="chip" onclick="askChip(this)">💪 High protein foods</span>
+                    <span class="chip" onclick="askChip(this)">⏰ Best meal timing</span>
+                </div>
+
+                <div class="chat-messages" id="messageList"></div>
+
+                <!-- Typing indicator (hidden by default) -->
+                <div id="typingIndicator" style="display:none; padding: 0 2rem 0.5rem; align-items:center; gap:0.5rem;">
+                    <div style="display:flex; gap:4px; padding: 0.75rem 1rem; background: var(--bg-card); border-radius: 20px; border-bottom-left-radius:4px; width:fit-content;">
+                        <span class="dot"></span><span class="dot"></span><span class="dot"></span>
+                    </div>
+                </div>
+
+                <form class="chat-footer" onsubmit="event.preventDefault(); sendMessage();">
+                    <input type="text" id="chatInput" class="chat-input" placeholder="Ask about food, nutrients, calories, diet plans...">
+                    <button type="submit" class="send-btn" id="sendBtn">
+                        <i data-lucide="send"></i>
+                    </button>
+                </form>
+            </main>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer style="padding: 4rem 0; text-align: center; border-top: 1px solid var(--glass-border);">
+        <div class="container">
+            <a href="./index.html" class="logo" style="justify-content: center; margin-bottom: 1.5rem;">
+                <div class="logo-symbol">
+                    <i data-lucide="apple"></i>
+                </div>
+                <span>Smart <span class="gradient-text">Diet</span></span>
+            </a>
+            <p class="text-muted" style="max-width: 500px; margin: 0 auto 2rem auto;">
+                Improving awareness of nutrition for better health outcomes through efficient data management and user-friendly interaction.
+            </p>
+            <div class="nav-links" style="justify-content: center; margin-bottom: 2rem;">
+                <a href="#">About</a>
+                <a href="#">Privacy</a>
+                <a href="#">Terms</a>
+                <a href="#">Contact</a>
+            </div>
+            <p class="text-muted" style="font-size: 0.8rem;">&copy; 2026 Smart Diet Advisor. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <style>
+        .chip {
+            padding: 0.4rem 0.9rem;
+            border-radius: 30px;
+            background: rgba(16, 185, 129,0.12);
+            border: 1px solid rgba(16, 185, 129,0.3);
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            white-space: nowrap;
+            color: var(--text-main);
+        }
+        .chip:hover { background: rgba(16, 185, 129,0.25); transform: translateY(-1px); }
+
+        .dot {
+            width: 7px; height: 7px;
+            background: var(--primary);
+            border-radius: 50%;
+            animation: bounce 1.2s infinite ease-in-out;
+        }
+        .dot:nth-child(2) { animation-delay: 0.2s; }
+        .dot:nth-child(3) { animation-delay: 0.4s; }
+        @keyframes bounce {
+            0%, 80%, 100% { transform: translateY(0); opacity: 0.4; }
+            40% { transform: translateY(-6px); opacity: 1; }
+        }
+        .message-avatar {
+            width: 32px; height: 32px;
+            border-radius: 50%;
+            background: var(--gradient);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 0.85rem; color: white; font-weight: 700;
+            flex-shrink: 0;
+        }
+        .message-wrap { display:flex; gap:0.6rem; align-items:flex-end; }
+        .message-wrap.user { flex-direction: row-reverse; }
+    </style>
+
+    <script>
+        lucide.createIcons();
+
+        // ── Load user preferences from localStorage ──────────────────────────
+        const prefs = JSON.parse(localStorage.getItem('dietPrefs') || '{}');
+        const userGoal = prefs.goal || 'General Wellness';
+        const userActivity = prefs.activity || 'moderate';
+        const userHealth = (prefs.health || '').toLowerCase();
+        const userAllergies = (prefs.allergies || '').toLowerCase();
+        const userWeight = parseFloat(prefs.weight) || 70;
+        const userHeight = parseFloat(prefs.height) || 170;
+
+        // ── Knowledge base: [keywords[], response] ────────────────────────────
+        const KB = [
+            // Calories
+            [['calorie','kcal','how much should i eat','daily intake','energy intake'],
+             () => {
+                const bmr = 10 * userWeight + 6.25 * userHeight - 5 * 25 + 5;
+                const mult = { sedentary:1.2, light:1.375, moderate:1.55, very:1.725 }[userActivity] || 1.55;
+                const tdee = Math.round(bmr * mult);
+                const goal = userGoal === 'Weight Management' ? tdee - 400
+                           : userGoal === 'Muscle Gain' ? tdee + 300 : tdee;
+                return `Based on your profile, your **estimated daily calorie need (TDEE)** is ~**${tdee} kcal**.\n\n🎯 For your goal (*${userGoal}*), I recommend targeting **~${goal} kcal/day**.\n\nSpread this across 3 main meals + 1–2 healthy snacks for the best results.`;
+             }],
+
+            // Water / Hydration
+            [['water','hydrat','drink','fluid','litre','liter'],
+             `💧 **Daily Water Intake:**\n\n• General rule: **8 glasses (2 liters)** per day.\n• If you're active or in a hot climate, aim for **2.5–3 liters**.\n• A good trick: drink **500ml** first thing in the morning, and **a glass before each meal** to aid digestion.\n\n⚠️ Avoid sugary drinks — they add hidden calories!`],
+
+            // Protein
+            [['protein','muscle','gain muscle','build muscle','whey','egg white','chicken breast'],
+             `💪 **Protein Guide:**\n\n• For Muscle Gain: **1.6–2.2g per kg** of body weight (~${Math.round(userWeight*1.8)}g/day for you).\n• For Weight Loss: **1.2–1.6g/kg** (~${Math.round(userWeight*1.4)}g/day).\n\n🥚 **Best protein sources:** Eggs, chicken breast, Greek yogurt, lentils, paneer, fish, tofu, whey protein.\n\n🕐 Tip: Eat protein within **45 min after workout** for best muscle recovery.`],
+
+            // Weight loss
+            [['weight loss','lose weight','fat loss','slim','reduce weight','cut fat','cutting'],
+             `📉 **Weight Loss Tips:**\n\n1. Create a **300–500 kcal daily deficit** vs your TDEE.\n2. Eat **high-volume, low-calorie** foods: salads, soups, vegetables.\n3. Prioritize **protein** to stay full longer.\n4. Avoid **liquid calories** (soda, juice, alcohol).\n5. Do **150+ min** of moderate cardio per week.\n6. Sleep **7–9 hours** — poor sleep raises hunger hormones.\n\n🥗 Avoid crash diets — slow and steady wins!`],
+
+            // Weight gain / muscle gain
+            [['weight gain','gain weight','bulk','bulking','increase weight','mass'],
+             `📈 **Healthy Weight / Muscle Gain Tips:**\n\n1. Eat **300–500 kcal above your TDEE** daily.\n2. Focus on **protein + complex carbs** at every meal.\n3. Eat **every 3–4 hours** — don't skip meals.\n4. Add **resistance training** 3–5x per week.\n5. Good bulking foods: rice, oats, banana, nuts, peanut butter, eggs, chicken, sweet potato.\n\n⚡ Don't bulk on junk food — it adds fat, not muscle!`],
+
+            // Meal timing
+            [['meal time','timing','when to eat','breakfast','lunch','dinner','snack time','pre workout','post workout','intermittent'],
+             `⏰ **Optimal Meal Timing:**\n\n• **Breakfast** (7–9 AM): Start with protein + complex carbs. Don't skip!\n• **Lunch** (12–1 PM): Biggest meal of the day. Include all macros.\n• **Snack** (4–5 PM): Fruits, nuts, yogurt.\n• **Dinner** (7–8 PM): Lighter meal. Lean protein + vegetables.\n• **Pre-workout**: Light carbs 30–60 min before exercise.\n• **Post-workout**: Protein + some carbs within 45 min.\n\n⚠️ Avoid eating heavy meals after 9 PM.`],
+
+            // Carbs
+            [['carb','carbohydrate','rice','bread','gluten','wheat','sugar','glucose'],
+             `🍚 **Carbohydrates — What You Need to Know:**\n\n• **Complex carbs** (slow energy): Oats, brown rice, sweet potato, whole wheat — these are your FRIENDS.\n• **Simple carbs** (fast energy): White sugar, candy, soda — limit these.\n• Athletes and active people need more carbs for fuel.\n\nFor ${userGoal === 'Weight Management' ? '**Weight Management**, reduce refined carbs and eat more fiber-rich options.' : userGoal === 'Muscle Gain' ? '**Muscle Gain**, carbs are essential — don\'t cut them!' : '**General Wellness**, focus on whole-grain, unprocessed carbs.'}`],
+
+            // Fats
+            [['fat','oil','omega','avocado','butter','ghee','saturated','unsaturated','cholesterol','fatty'],
+             `🥑 **Healthy Fats Guide:**\n\n✅ **Good fats (eat these):**\n• Avocado, olive oil, nuts, seeds, fatty fish (salmon, mackerel)\n• Omega-3 rich: flaxseed, walnuts, chia seeds\n\n❌ **Bad fats (limit these):**\n• Trans fats (fried foods, processed snacks)\n• Excessive saturated fat (red meat, butter)\n\nFats should be **20–35%** of your total calorie intake. Don't go fat-free — healthy fats support hormones, brain, and vitamins!`],
+
+            // Vitamins & Minerals
+            [['vitamin','mineral','iron','calcium','zinc','magnesium','b12','d3','deficiency','supplement'],
+             `💊 **Key Vitamins & Minerals for Diet:**\n\n• **Vitamin D3**: Sunlight + eggs, fish, fortified milk. Crucial for bones & immunity.\n• **B12**: Meat, eggs, dairy. Vegans need supplements!\n• **Iron**: Spinach, lentils, red meat. Pair with Vitamin C for better absorption.\n• **Calcium**: Dairy, broccoli, almonds. For bones & muscle function.\n• **Magnesium**: Nuts, seeds, dark chocolate. Helps sleep, energy & muscle recovery.\n• **Zinc**: Pumpkin seeds, chickpeas, meat. Boosts immunity.\n\n⚠️ Don't self-supplement without testing — excess can be harmful.`],
+
+            // Diabetes
+            [['diabet','blood sugar','insulin','glucose control','sugar level','glycemic'],
+             `🩺 **Diet Tips for Diabetes:**\n\n1. **Low Glycemic Index** foods: Oats, legumes, non-starchy vegetables, nuts.\n2. **Avoid** refined sugar, white rice, sweet drinks, processed snacks.\n3. Eat **smaller meals every 3–4 hours** to stabilize blood sugar.\n4. Increase **dietary fiber**: vegetables, whole grains, beans.\n5. **Healthy plate**: ½ vegetables, ¼ protein, ¼ complex carbs.\n6. Stay hydrated — water helps kidneys flush excess glucose.\n\n👨‍⚕️ Always consult your endocrinologist for a personalized plan.`],
+
+            // Cholesterol / Heart
+            [['cholesterol','heart','cardiac','hdl','ldl','blood pressure','hypertension','arteries'],
+             `❤️ **Heart-Healthy Diet Tips:**\n\n✅ **Eat more:**\n• Oats, fatty fish, avocado, olive oil, nuts, fruits, vegetables, legumes.\n\n❌ **Limit:**\n• Saturated fats, trans fats, excess salt, processed meats, fried foods.\n\n🐟 Omega-3 fatty acids (salmon, flaxseed) are excellent for raising HDL (good cholesterol).\n\n🧂 Keep sodium below **2,300mg/day** to control blood pressure.\n\nExercise + diet together have the best effect on heart health.`],
+
+            // Fiber
+            [['fiber','fibre','digestion','constipat','gut health','bloating','stomach'],
+             `🌿 **Dietary Fiber & Gut Health:**\n\n• Adults need **25–38g of fiber** per day.\n• **Soluble fiber** (oats, beans, apples): Lowers cholesterol, stabilizes blood sugar.\n• **Insoluble fiber** (whole wheat, carrots): Promotes bowel movement.\n\n🥦 **Top fiber foods:** Lentils, black beans, oats, chia seeds, broccoli, pears, avocado.\n\n💡 Increase fiber gradually + drink more water to avoid bloating.`],
+
+            // Keto / low carb
+            [['keto','ketogenic','low carb','atkins','no carb'],
+             `🥩 **Keto / Low-Carb Diet:**\n\nKetogenic diet restricts carbs to **20–50g/day**, forcing the body to burn fat for fuel (ketosis).\n\n✅ **Keto-friendly foods:** Meat, fish, eggs, cheese, avocado, nuts, leafy greens, oils.\n❌ **Avoid:** Bread, rice, pasta, sugar, most fruits, beans.\n\n⚠️ **Cautions:** Not suitable for everyone — especially people with **diabetes or kidney issues**. Short-term keto can cause "keto flu" (fatigue, headache).\n\nConsult a doctor before starting if you have any health conditions.`],
+
+            // Vegan / Vegetarian
+            [['vegan','vegetarian','plant based','no meat','dairy free'],
+             `🌱 **Vegan / Vegetarian Diet Tips:**\n\n• Ensure adequate **Vitamin B12** (supplement or fortified foods).\n• Get protein from: lentils, chickpeas, tofu, tempeh, quinoa, edamame, nuts.\n• Watch for **iron** (spinach + Vit C), **zinc** (pumpkin seeds), **calcium** (broccoli, almond milk), **Omega-3** (flaxseed, walnuts).\n• Avoid processed vegan junk food — it can still be high calorie!\n\n🥗 A well-planned plant-based diet is **very healthy** and supports all fitness goals.`],
+
+            // Allergies
+            [['allergy','allergic','intolerant','lactose','gluten','nut allergy','peanut','soy'],
+             () => {
+                const a = userAllergies || 'none listed';
+                return `🚫 **Managing Food Allergies:**\n\nYour saved allergies: **${a}**.\n\n• Always read food labels carefully.\n• For **lactose intolerance**: Try lactose-free dairy, almond milk, oat milk, or coconut milk.\n• For **gluten sensitivity/celiac**: Choose rice, quinoa, corn, oats (certified GF), and potatoes.\n• For **nut allergy**: Avoid processed foods that may have cross-contamination. Seeds (sunflower, pumpkin) are usually safe.\n• For **soy allergy**: Avoid tofu, edamame, soy sauce; check packaged food labels.\n\n⚠️ Severe allergies need medical supervision — always carry your EpiPen if prescribed.`;
+             }],
+
+            // Sleep & diet
+            [['sleep','insomnia','rest','melatonin','tired','fatigue'],
+             `😴 **Sleep & Nutrition:**\n\n• Poor sleep increases **ghrelin** (hunger hormone) and decreases **leptin** (fullness hormone) — leading to overeating.\n• **Sleep-supporting foods:** Warm milk, banana, oats, almonds, kiwi, chamomile tea.\n• **Avoid before bed:** Caffeine (after 2 PM), heavy meals, alcohol.\n• Aim for **7–9 hours** of quality sleep for optimal metabolism and muscle recovery.\n\n💡 A magnesium-rich snack (like a small handful of pumpkin seeds) before bed can improve sleep quality.`],
+
+            // Intermittent fasting
+            [['intermittent','fasting','16:8','18:6','eat window','16 8','skip breakfast'],
+             `⏳ **Intermittent Fasting (IF):**\n\n**Common methods:**\n• **16:8** — Fast 16 hrs, eat in an 8-hr window (e.g., 12 PM – 8 PM).\n• **5:2** — Eat normally 5 days, restrict to 500 kcal on 2 days.\n\n✅ **Benefits:** Weight loss, improved insulin sensitivity, cellular repair.\n❌ **Not for:** Pregnant women, people with eating disorders, Type 1 diabetics.\n\n💡 During the eating window, still eat **nutritious, whole foods** — IF doesn't cancel out junk food!`],
+
+            // Fruits & Vegetables
+            [['fruit','vegetable','salad','vegetable','greens','superfood','berry','spinach'],
+             `🥦 **Power of Fruits & Vegetables:**\n\n• Aim for **5+ servings** per day (a serving = 1 cup leafy greens or ½ cup other veg/fruit).\n• **Top superfoods:** Spinach, kale, blueberries, broccoli, beets, sweet potato, avocado.\n• Vegetables are low-calorie and high-fiber — great for weight management.\n• Fruits have natural sugars — enjoy them but don't overdo juices (they remove fiber).\n\n🌈 Eat a **rainbow** of colors for the widest range of vitamins and antioxidants!`],
+
+            // Help / greet
+            [['hello','hi','hey','good morning','good evening','how are you','what can you do','help','start','begin'],
+             () => {
+                return `👋 Hello! I'm your **Smart Diet Advisor AI**.\n\nI can help you with:\n• 🔥 Calorie & macro calculations based on **your profile**\n• 🥗 Diet plans for your goal (*${userGoal}*)\n• 💊 Vitamins, minerals & supplement advice\n• 🍽️ Meal timing & food swaps\n• 🩺 Diet tips for conditions (diabetes, cholesterol, etc.)\n• 💧 Hydration & gut health\n\nJust **type your question** below or tap a quick question above! 😊`;
+             }],
+
+            // Default
+            [['default'],
+             `🤔 I'm not sure I have a specific answer for that, but here are some things I can help with:\n\n• Calorie & protein needs\n• Best foods for your goal\n• Meal timing & hydration\n• Managing health conditions through diet\n• Weight loss or muscle gain strategies\n\nTry rephrasing your question or tap one of the quick chips above! 😊`]
+        ];
+
+        // ── Find best matching response ───────────────────────────────────────
+        function getBotResponse(msg) {
+            const lower = msg.toLowerCase();
+            for (const [keywords, response] of KB) {
+                if (keywords[0] === 'default') continue;
+                if (keywords.some(k => lower.includes(k))) {
+                    return typeof response === 'function' ? response() : response;
+                }
+            }
+            // Default
+            const def = KB[KB.length - 1][1];
+            return typeof def === 'function' ? def() : def;
+        }
+
+        // ── Format markdown-ish text (bold, newlines) ─────────────────────────
+        function formatMsg(text) {
+            return text
+                .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                .replace(/\n/g, '<br>');
+        }
+
+        // ── Time helper ────────────────────────────────────────────────────────
+        function timeStr() {
+            const now = new Date();
+            const h = now.getHours(), m = now.getMinutes().toString().padStart(2,'0');
+            return `${h > 12 ? h-12 : h || 12}:${m} ${h >= 12 ? 'PM' : 'AM'}`;
+        }
+
+        // ── Append message ─────────────────────────────────────────────────────
+        function appendMsg(text, role) {
+            const list = document.getElementById('messageList');
+            const wrap = document.createElement('div');
+            wrap.className = `message-wrap ${role}`;
+
+            if (role === 'expert') {
+                wrap.innerHTML = `
+                    <div class="message-avatar">AI</div>
+                    <div class="message expert glass animate-up" style="margin-bottom:0;">${formatMsg(text)}<span class="message-time">${timeStr()}</span></div>`;
+            } else {
+                wrap.innerHTML = `
+                    <div class="message user animate-up" style="margin-bottom:0;">${formatMsg(text)}<span class="message-time">${timeStr()}</span></div>`;
+            }
+            list.appendChild(wrap);
+            list.scrollTop = list.scrollHeight;
+        }
+
+        // ── Show / hide typing indicator ───────────────────────────────────────
+        function setTyping(show) {
+            const t = document.getElementById('typingIndicator');
+            t.style.display = show ? 'flex' : 'none';
+            if (show) document.getElementById('messageList').scrollTop = 99999;
+        }
+
+        // ── Send message ───────────────────────────────────────────────────────
+        function sendMessage() {
+            const input = document.getElementById('chatInput');
+            const val = input.value.trim();
+            if (!val) return;
+
+            appendMsg(val, 'user');
+            input.value = '';
+            document.getElementById('sendBtn').disabled = true;
+            setTyping(true);
+
+            // Simulate thinking delay (800–1400ms)
+            const delay = 800 + Math.random() * 600;
+            setTimeout(() => {
+                setTyping(false);
+                const reply = getBotResponse(val);
+                appendMsg(reply, 'expert');
+                document.getElementById('sendBtn').disabled = false;
+                lucide.createIcons();
+            }, delay);
+        }
+
+        // ── Quick chip handler ─────────────────────────────────────────────────
+        function askChip(el) {
+            document.getElementById('chatInput').value = el.textContent.replace(/^[^\s]+\s/, '');
+            sendMessage();
+        }
+
+        // ── Welcome message on load ────────────────────────────────────────────
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                const welcome = `👋 Hello! I'm your **Smart Diet Advisor AI**.\n\nI can answer questions about calories, proteins, meal timing, weight loss, muscle gain, vitamins, and more — all tailored to your goal: **${userGoal}**.\n\nTry asking a question below or tap a quick chip above! 🥗`;
+                appendMsg(welcome, 'expert');
+                lucide.createIcons();
+            }, 400);
+        });
+
+        // ── Enter key support ─────────────────────────────────────────────────
+        document.getElementById('chatInput').addEventListener('keydown', e => {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                sendMessage();
+            }
+        });
+    </script>
+</body>
+</html>
+

@@ -1,0 +1,726 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script>
+        if (!localStorage.getItem('token') && !localStorage.getItem('user')) {
+            window.location.href = './login.html';
+        }
+    </script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Diet Advisor | Food Tracker</title>
+    <meta name="description" content="Log your daily food intake and instantly see your calorie and macro breakdown.">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link rel="stylesheet" href="./styles/main.css">
+
+    <style>
+        .tracker-page {
+            padding-top: 110px;
+            padding-bottom: 60px;
+            min-height: 100vh;
+        }
+
+        /* ── Search & Add Panel ── */
+        .add-food-panel {
+            background: rgba(255,255,255,0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .search-row {
+            display: grid;
+            grid-template-columns: 1fr 140px 120px auto;
+            gap: 1rem;
+            align-items: end;
+        }
+
+        .field-label {
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            margin-bottom: 0.4rem;
+            display: block;
+        }
+
+        .input-field {
+            width: 100%;
+            padding: 0.875rem 1.25rem;
+            border-radius: 14px;
+            background: rgba(255,255,255,0.9);
+            border: 1.5px solid var(--glass-border);
+            color: var(--text-main);
+            font-family: inherit;
+            font-size: 0.95rem;
+            transition: all 0.3s;
+        }
+        .input-field:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(16, 185, 129,0.15);
+        }
+
+        /* autocomplete dropdown */
+        .autocomplete-wrap { position: relative; }
+        .autocomplete-list {
+            position: absolute;
+            top: calc(100% + 4px);
+            left: 0; right: 0;
+            background: white;
+            border: 1px solid var(--glass-border);
+            border-radius: 14px;
+            max-height: 240px;
+            overflow-y: auto;
+            z-index: 200;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.1);
+            display: none;
+        }
+        .autocomplete-list.open { display: block; }
+        .ac-item {
+            padding: 0.75rem 1.25rem;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.9rem;
+            transition: background 0.15s;
+        }
+        .ac-item:hover { background: rgba(16, 185, 129,0.08); }
+        .ac-item .ac-cals { font-size: 0.8rem; color: var(--text-muted); }
+
+        /* ── Main layout ── */
+        .tracker-grid {
+            display: grid;
+            grid-template-columns: 1fr 340px;
+            gap: 2rem;
+            align-items: start;
+        }
+
+        /* ── Log table ── */
+        .log-table { width: 100%; border-collapse: collapse; }
+        .log-table th {
+            text-align: left;
+            padding: 0.75rem 1rem;
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            border-bottom: 2px solid var(--glass-border);
+        }
+        .log-table td {
+            padding: 0.9rem 1rem;
+            font-size: 0.9rem;
+            border-bottom: 1px solid rgba(16, 185, 129,0.08);
+            vertical-align: middle;
+        }
+        .log-table tr:last-child td { border-bottom: none; }
+        .log-table tr:hover td { background: rgba(16, 185, 129,0.04); }
+
+        .food-emoji { font-size: 1.4rem; margin-right: 0.5rem; }
+        .food-name-cell { font-weight: 600; }
+        .food-qty-cell { color: var(--text-muted); font-size: 0.85rem; }
+        .macro-pill {
+            display: inline-block;
+            padding: 0.15rem 0.55rem;
+            border-radius: 30px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        .pill-carb { background: rgba(52,211,153,0.15); color: #059669; }
+        .pill-prot { background: rgba(96,165,250,0.15); color: #2563eb; }
+        .pill-fat  { background: rgba(251,191,36,0.15); color: #d97706; }
+
+        .del-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: var(--text-muted);
+            transition: color 0.2s;
+            padding: 0.3rem;
+            border-radius: 8px;
+        }
+        .del-btn:hover { color: #ef4444; background: rgba(239,68,68,0.08); }
+
+        .empty-log {
+            text-align: center;
+            padding: 3rem 1rem;
+            color: var(--text-muted);
+        }
+        .empty-log .empty-icon { font-size: 3rem; margin-bottom: 0.75rem; }
+
+        /* ── Summary sidebar ── */
+        .summary-card { position: sticky; top: 110px; }
+
+        .calorie-ring-wrap {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .ring-svg { transform: rotate(-90deg); }
+        .ring-bg { fill: none; stroke: rgba(16, 185, 129,0.1); stroke-width: 10; }
+        .ring-fill {
+            fill: none;
+            stroke: url(#ringGrad);
+            stroke-width: 10;
+            stroke-linecap: round;
+            transition: stroke-dashoffset 0.6s ease;
+        }
+
+        .ring-label {
+            text-align: center;
+            margin-top: -0.5rem;
+        }
+        .ring-kcal { font-size: 2rem; font-weight: 800; }
+        .ring-of   { font-size: 0.85rem; color: var(--text-muted); }
+
+        /* macro bars */
+        .macro-row { margin-bottom: 1rem; }
+        .macro-header { display: flex; justify-content: space-between; font-size: 0.85rem; margin-bottom: 0.35rem; }
+        .macro-bar-bg {
+            height: 8px; border-radius: 4px;
+            background: rgba(16, 185, 129,0.1);
+            overflow: hidden;
+        }
+        .macro-bar-fill {
+            height: 100%; border-radius: 4px;
+            transition: width 0.5s ease;
+        }
+        .bar-carb { background: linear-gradient(90deg, #34d399, #6ee7b7); }
+        .bar-prot { background: linear-gradient(90deg, #60a5fa, #93c5fd); }
+        .bar-fat  { background: linear-gradient(90deg, #fbbf24, #fde68a); }
+
+        .divider { height: 1px; background: var(--glass-border); margin: 1.5rem 0; }
+
+        .micro-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.75rem;
+        }
+        .micro-card {
+            background: rgba(255,255,255,0.5);
+            border-radius: 14px;
+            padding: 0.75rem 1rem;
+            text-align: center;
+        }
+        .micro-val { font-size: 1.1rem; font-weight: 700; }
+        .micro-lbl { font-size: 0.75rem; color: var(--text-muted); margin-top: 0.1rem; }
+
+        @media (max-width: 900px) {
+            .tracker-grid { grid-template-columns: 1fr; }
+            .summary-card { position: static; }
+            .search-row { grid-template-columns: 1fr 1fr; }
+            .search-row .add-col { grid-column: span 2; }
+        }
+        @media (max-width: 580px) {
+            .search-row { grid-template-columns: 1fr; }
+            .search-row .add-col { grid-column: span 1; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Floating bg icons -->
+    <div style="position:fixed;inset:0;z-index:-1;pointer-events:none;opacity:0.4;overflow:hidden;">
+        <div class="floating-icon" style="top:8%;left:4%;font-size:5rem;animation-delay:0s;">🥑</div>
+        <div class="floating-icon reverse" style="bottom:12%;right:6%;font-size:6rem;animation-delay:1s;">🍗</div>
+        <div class="floating-icon reverse" style="top:20%;right:18%;font-size:3.5rem;animation-delay:2s;">🥦</div>
+        <div class="floating-icon" style="bottom:30%;left:12%;font-size:4rem;animation-delay:1.5s;">🍚</div>
+        <div class="floating-icon" style="top:55%;right:28%;font-size:3rem;animation-delay:3s;">🥛</div>
+    </div>
+
+    <header class="scrolled">
+        <div class="container nav-content">
+            <nav>
+                <a href="./index.html" class="logo">
+                    <div class="logo-symbol"><i data-lucide="apple"></i></div>
+                    <span>Smart <span class="gradient-text">Diet</span></span>
+                </a>
+                <div class="nav-links">
+                    <a href="./dashboard.html">Daily Track</a>
+                    <a href="./tracker.html" class="active">Food Tracker</a>
+                    <a href="./diet-rules.html">Diet Rules</a>
+                    <a href="./chat.html">Expert Chat</a>
+                    <a href="#" onclick="localStorage.removeItem('user'); localStorage.removeItem('token'); window.location.href='./index.html';" class="btn btn-secondary btn-sm">Sign Out</a>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <div class="tracker-page container">
+        <div style="margin-bottom:2.5rem;">
+            <h1 style="font-size:2.2rem;">🍽️ Daily <span class="gradient-text">Food Tracker</span></h1>
+            <p class="text-muted" style="margin-top:0.4rem;">Log what you eat and see your calorie & macro breakdown in real time.</p>
+        </div>
+
+        <!-- Add Food Panel -->
+        <div class="add-food-panel animate-up">
+            <h3 style="margin-bottom:1.25rem;display:flex;align-items:center;gap:0.5rem;"><i data-lucide="plus-circle" style="color:var(--primary);"></i> Add Food Item</h3>
+            <div class="search-row">
+                <!-- Food search -->
+                <div class="autocomplete-wrap">
+                    <label class="field-label" for="foodSearch">Food Name</label>
+                    <input type="text" id="foodSearch" class="input-field" placeholder="Search food (e.g. rice, egg, banana)..." autocomplete="off">
+                    <div class="autocomplete-list" id="acList"></div>
+                </div>
+
+                <!-- Quantity -->
+                <div>
+                    <label class="field-label" for="foodQty">Quantity</label>
+                    <input type="number" id="foodQty" class="input-field" placeholder="100" min="1" value="100">
+                </div>
+
+                <!-- Unit -->
+                <div>
+                    <label class="field-label" for="foodUnit">Unit</label>
+                    <select id="foodUnit" class="input-field">
+                        <option value="g">grams (g)</option>
+                        <option value="ml">ml</option>
+                        <option value="pc">pieces</option>
+                        <option value="cup">cups</option>
+                        <option value="tbsp">tbsp</option>
+                    </select>
+                </div>
+
+                <!-- Add button -->
+                <div class="add-col" style="padding-bottom:0;">
+                    <label class="field-label" style="visibility:hidden;">.</label>
+                    <button class="btn btn-primary" onclick="addFoodItem()" style="width:100%;height:48px;border-radius:14px;">
+                        <i data-lucide="plus"></i> Add
+                    </button>
+                </div>
+            </div>
+            <p id="searchHint" style="font-size:0.8rem;color:var(--text-muted);margin-top:0.75rem;display:none;">
+                ℹ️ Nutrition values are per 100g. Quantity adjusts proportionally.
+            </p>
+        </div>
+
+        <!-- Main tracker grid -->
+        <div class="tracker-grid">
+            <!-- Log Panel -->
+            <div class="glass-card animate-up" style="padding:0;overflow:hidden;">
+                <div style="padding:1.5rem 2rem;border-bottom:1px solid var(--glass-border);display:flex;justify-content:space-between;align-items:center;">
+                    <h3>Today's Log — <span id="logDate" style="color:var(--primary);"></span></h3>
+                    <button onclick="clearLog()" class="btn btn-secondary btn-sm" style="border-radius:10px;font-size:0.8rem;">
+                        <i data-lucide="trash-2"></i> Clear All
+                    </button>
+                </div>
+
+                <div id="emptyState" class="empty-log">
+                    <div class="empty-icon">🥗</div>
+                    <p style="font-weight:600;margin-bottom:0.4rem;">Nothing logged yet!</p>
+                    <p style="font-size:0.85rem;">Search for a food above and click Add.</p>
+                </div>
+
+                <div id="logTableWrap" style="display:none;overflow-x:auto;">
+                    <table class="log-table">
+                        <thead>
+                            <tr>
+                                <th>Food</th>
+                                <th>Qty</th>
+                                <th style="text-align:center;">Cals</th>
+                                <th style="text-align:center;">Carbs</th>
+                                <th style="text-align:center;">Protein</th>
+                                <th style="text-align:center;">Fat</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody id="logBody"></tbody>
+                        <tfoot>
+                            <tr style="background:rgba(16, 185, 129,0.06);">
+                                <td colspan="2" style="font-weight:700;padding:1rem;">Total</td>
+                                <td style="text-align:center;font-weight:800;color:var(--primary);font-size:1rem;" id="totalCal">0</td>
+                                <td style="text-align:center;font-weight:700;color:#059669;" id="totalCarb">0g</td>
+                                <td style="text-align:center;font-weight:700;color:#2563eb;" id="totalProt">0g</td>
+                                <td style="text-align:center;font-weight:700;color:#d97706;" id="totalFat">0g</td>
+                                <td></td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Summary Sidebar -->
+            <div class="summary-card">
+                <div class="glass-card" style="margin-bottom:1.5rem;">
+                    <h4 style="margin-bottom:1.25rem;font-size:1rem;">🔥 Calorie Summary</h4>
+
+                    <!-- Ring -->
+                    <div class="calorie-ring-wrap">
+                        <svg class="ring-svg" width="140" height="140" viewBox="0 0 140 140">
+                            <defs>
+                                <linearGradient id="ringGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                                    <stop offset="0%" stop-color="#10b981"/>
+                                    <stop offset="100%" stop-color="#34d399"/>
+                                </linearGradient>
+                            </defs>
+                            <circle class="ring-bg" cx="70" cy="70" r="55"/>
+                            <circle class="ring-fill" id="ringFill" cx="70" cy="70" r="55"
+                                stroke-dasharray="345.4"
+                                stroke-dashoffset="345.4"/>
+                        </svg>
+                        <div class="ring-label">
+                            <div class="ring-kcal"><span id="ringKcal">0</span> <span style="font-size:1rem;font-weight:500;">kcal</span></div>
+                            <div class="ring-of">of <span id="ringGoal">2000</span> kcal goal</div>
+                        </div>
+                    </div>
+
+                    <div class="divider"></div>
+
+                    <!-- Macros -->
+                    <div class="macro-row">
+                        <div class="macro-header">
+                            <span style="font-weight:600;color:#059669;">🌾 Carbs</span>
+                            <span id="macroCarb" style="font-weight:700;">0 / <span id="goalCarb">250</span>g</span>
+                        </div>
+                        <div class="macro-bar-bg"><div class="macro-bar-fill bar-carb" id="barCarb" style="width:0%"></div></div>
+                    </div>
+                    <div class="macro-row">
+                        <div class="macro-header">
+                            <span style="font-weight:600;color:#2563eb;">💪 Protein</span>
+                            <span id="macroProt" style="font-weight:700;">0 / <span id="goalProt">80</span>g</span>
+                        </div>
+                        <div class="macro-bar-bg"><div class="macro-bar-fill bar-prot" id="barProt" style="width:0%"></div></div>
+                    </div>
+                    <div class="macro-row">
+                        <div class="macro-header">
+                            <span style="font-weight:600;color:#d97706;">🫒 Fat</span>
+                            <span id="macroFat" style="font-weight:700;">0 / <span id="goalFat">65</span>g</span>
+                        </div>
+                        <div class="macro-bar-bg"><div class="macro-bar-fill bar-fat" id="barFat" style="width:0%"></div></div>
+                    </div>
+                </div>
+
+                <!-- Micro nutrients -->
+                <div class="glass-card">
+                    <h4 style="margin-bottom:1.25rem;font-size:1rem;">📊 Extras</h4>
+                    <div class="micro-grid">
+                        <div class="micro-card">
+                            <div class="micro-val gradient-text" id="microFiber">0g</div>
+                            <div class="micro-lbl">Fiber</div>
+                        </div>
+                        <div class="micro-card">
+                            <div class="micro-val gradient-text" id="microSugar">0g</div>
+                            <div class="micro-lbl">Sugar</div>
+                        </div>
+                        <div class="micro-card">
+                            <div class="micro-val gradient-text" id="microSodium">0mg</div>
+                            <div class="micro-lbl">Sodium</div>
+                        </div>
+                        <div class="micro-card">
+                            <div class="micro-val gradient-text" id="microItems">0</div>
+                            <div class="micro-lbl">Items</div>
+                        </div>
+                    </div>
+
+                    <div class="divider"></div>
+                    <a href="./chat.html" class="btn btn-secondary" style="width:100%;justify-content:center;border-radius:14px;font-size:0.9rem;">
+                        <i data-lucide="message-circle"></i> Ask Diet AI
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer style="padding:3rem 0;text-align:center;border-top:1px solid var(--glass-border);margin-top:3rem;">
+        <div class="container">
+            <a href="./index.html" class="logo" style="justify-content:center;margin-bottom:1rem;">
+                <div class="logo-symbol"><i data-lucide="apple"></i></div>
+                <span>Smart <span class="gradient-text">Diet</span></span>
+            </a>
+            <p class="text-muted" style="font-size:0.8rem;">&copy; 2026 Smart Diet Advisor. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+    // ── Food Database (per 100g / 100ml) ─────────────────────────────────────
+    // { name, emoji, cal, carb, prot, fat, fiber, sugar, sodium }
+    const FOOD_DB = [
+        // Grains & Carbs
+        { name:'Cooked White Rice',    emoji:'🍚', cal:130, carb:28,  prot:2.7, fat:0.3, fiber:0.4, sugar:0,   sodium:1  },
+        { name:'Cooked Brown Rice',    emoji:'🍚', cal:111, carb:23,  prot:2.6, fat:0.9, fiber:1.8, sugar:0.4, sodium:5  },
+        { name:'Cooked Oatmeal',       emoji:'🥣', cal:71,  carb:12,  prot:2.5, fat:1.5, fiber:1.7, sugar:0,   sodium:49 },
+        { name:'Whole Wheat Bread',    emoji:'🍞', cal:247, carb:43,  prot:11,  fat:3.4, fiber:7,   sugar:6,   sodium:400},
+        { name:'White Bread',          emoji:'🍞', cal:265, carb:49,  prot:9,   fat:3.2, fiber:2.7, sugar:5,   sodium:490},
+        { name:'Pasta (cooked)',       emoji:'🍝', cal:131, carb:25,  prot:5,   fat:1.1, fiber:1.8, sugar:0.6, sodium:1  },
+        { name:'Sweet Potato (cooked)',emoji:'🍠', cal:90,  carb:21,  prot:2,   fat:0.1, fiber:3.3, sugar:4.2, sodium:27 },
+        { name:'Potato (boiled)',      emoji:'🥔', cal:87,  carb:20,  prot:1.9, fat:0.1, fiber:1.8, sugar:0.9, sodium:4  },
+        { name:'Corn',                 emoji:'🌽', cal:96,  carb:21,  prot:3.4, fat:1.5, fiber:2.4, sugar:4.5, sodium:15 },
+
+        // Proteins
+        { name:'Chicken Breast (cooked)',emoji:'🍗', cal:165, carb:0,   prot:31,  fat:3.6, fiber:0,   sugar:0,   sodium:74 },
+        { name:'Boiled Egg',           emoji:'🥚', cal:155, carb:1.1, prot:13,  fat:11,  fiber:0,   sugar:1.1, sodium:124},
+        { name:'Egg White',            emoji:'🥚', cal:52,  carb:0.7, prot:11,  fat:0.2, fiber:0,   sugar:0.7, sodium:166},
+        { name:'Salmon (cooked)',      emoji:'🐟', cal:208, carb:0,   prot:20,  fat:13,  fiber:0,   sugar:0,   sodium:59 },
+        { name:'Tuna (canned)',        emoji:'🐟', cal:132, carb:0,   prot:28,  fat:1.3, fiber:0,   sugar:0,   sodium:330},
+        { name:'Paneer',               emoji:'🧀', cal:265, carb:1.2, prot:18,  fat:21,  fiber:0,   sugar:1.2, sodium:28 },
+        { name:'Tofu',                 emoji:'🟦', cal:76,  carb:1.9, prot:8,   fat:4.8, fiber:0.3, sugar:0.5, sodium:7  },
+        { name:'Lentils (cooked)',     emoji:'🫘', cal:116, carb:20,  prot:9,   fat:0.4, fiber:7.9, sugar:1.8, sodium:2  },
+        { name:'Chickpeas (cooked)',   emoji:'🫘', cal:164, carb:27,  prot:9,   fat:2.6, fiber:7.6, sugar:4.8, sodium:24 },
+        { name:'Emerald green Beans (cooked)', emoji:'🫘', cal:132, carb:24,  prot:8.9, fat:0.5, fiber:8.7, sugar:0.3, sodium:1  },
+        { name:'Greek Yogurt (plain)', emoji:'🥛', cal:59,  carb:3.6, prot:10,  fat:0.4, fiber:0,   sugar:3.2, sodium:36 },
+        { name:'Whey Protein (30g)',   emoji:'💪', cal:113, carb:4,   prot:23,  fat:1.5, fiber:0,   sugar:2,   sodium:60 },
+
+        // Dairy
+        { name:'Whole Milk',           emoji:'🥛', cal:61,  carb:4.8, prot:3.2, fat:3.3, fiber:0,   sugar:5.1, sodium:43 },
+        { name:'Cheddar Cheese',       emoji:'🧀', cal:402, carb:1.3, prot:25,  fat:33,  fiber:0,   sugar:0.5, sodium:621},
+        { name:'Butter',               emoji:'🧈', cal:717, carb:0.1, prot:0.9, fat:81,  fiber:0,   sugar:0.1, sodium:11 },
+
+        // Fruits
+        { name:'Banana',               emoji:'🍌', cal:89,  carb:23,  prot:1.1, fat:0.3, fiber:2.6, sugar:12,  sodium:1  },
+        { name:'Apple',                emoji:'🍎', cal:52,  carb:14,  prot:0.3, fat:0.2, fiber:2.4, sugar:10,  sodium:1  },
+        { name:'Orange',               emoji:'🍊', cal:47,  carb:12,  prot:0.9, fat:0.1, fiber:2.4, sugar:9.4, sodium:0  },
+        { name:'Mango',                emoji:'🥭', cal:60,  carb:15,  prot:0.8, fat:0.4, fiber:1.6, sugar:13.7,sodium:1  },
+        { name:'Blueberries',          emoji:'🫐', cal:57,  carb:14,  prot:0.7, fat:0.3, fiber:2.4, sugar:10,  sodium:1  },
+        { name:'Grapes',               emoji:'🍇', cal:67,  carb:17,  prot:0.6, fat:0.4, fiber:0.9, sugar:16,  sodium:2  },
+        { name:'Watermelon',           emoji:'🍉', cal:30,  carb:7.6, prot:0.6, fat:0.2, fiber:0.4, sugar:6.2, sodium:1  },
+        { name:'Strawberries',         emoji:'🍓', cal:32,  carb:7.7, prot:0.7, fat:0.3, fiber:2,   sugar:4.9, sodium:1  },
+        { name:'Avocado',              emoji:'🥑', cal:160, carb:9,   prot:2,   fat:15,  fiber:7,   sugar:0.7, sodium:7  },
+
+        // Vegetables
+        { name:'Broccoli',             emoji:'🥦', cal:34,  carb:7,   prot:2.8, fat:0.4, fiber:2.6, sugar:1.7, sodium:33 },
+        { name:'Spinach',              emoji:'🥬', cal:23,  carb:3.6, prot:2.9, fat:0.4, fiber:2.2, sugar:0.4, sodium:79 },
+        { name:'Carrot',               emoji:'🥕', cal:41,  carb:10,  prot:0.9, fat:0.2, fiber:2.8, sugar:4.7, sodium:69 },
+        { name:'Tomato',               emoji:'🍅', cal:18,  carb:3.9, prot:0.9, fat:0.2, fiber:1.2, sugar:2.6, sodium:5  },
+        { name:'Cucumber',             emoji:'🥒', cal:15,  carb:3.6, prot:0.7, fat:0.1, fiber:0.5, sugar:1.7, sodium:2  },
+        { name:'Onion',                emoji:'🧅', cal:40,  carb:9.3, prot:1.1, fat:0.1, fiber:1.7, sugar:4.2, sodium:4  },
+        { name:'Capsicum (Bell Pepper)',emoji:'🫑', cal:31,  carb:6,   prot:1,   fat:0.3, fiber:2.1, sugar:4.2, sodium:4  },
+
+        // Nuts & Fats
+        { name:'Almonds',              emoji:'🌰', cal:579, carb:22,  prot:21,  fat:50,  fiber:12.5,sugar:4.4, sodium:1  },
+        { name:'Walnuts',              emoji:'🌰', cal:654, carb:14,  prot:15,  fat:65,  fiber:6.7, sugar:2.6, sodium:2  },
+        { name:'Peanuts',              emoji:'🥜', cal:567, carb:16,  prot:26,  fat:49,  fiber:8.5, sugar:4,   sodium:18 },
+        { name:'Peanut Butter',        emoji:'🥜', cal:588, carb:20,  prot:25,  fat:50,  fiber:6,   sugar:9,   sodium:459},
+        { name:'Olive Oil',            emoji:'🫙', cal:884, carb:0,   prot:0,   fat:100, fiber:0,   sugar:0,   sodium:2  },
+        { name:'Coconut Oil',          emoji:'🫙', cal:862, carb:0,   prot:0,   fat:100, fiber:0,   sugar:0,   sodium:0  },
+        { name:'Chia Seeds',           emoji:'🌱', cal:486, carb:42,  prot:17,  fat:31,  fiber:34,  sugar:0,   sodium:16 },
+
+        // Snacks & Others
+        { name:'Dark Chocolate (70%)', emoji:'🍫', cal:598, carb:46,  prot:8,   fat:43,  fiber:10.9,sugar:24,  sodium:20 },
+        { name:'Honey',                emoji:'🍯', cal:304, carb:82,  prot:0.3, fat:0,   fiber:0.2, sugar:82,  sodium:4  },
+        { name:'Idli (1 piece ~40g)',   emoji:'🟤', cal:39,  carb:8,   prot:1.9, fat:0.2, fiber:0.3, sugar:0,   sodium:60 },
+        { name:'Dal (cooked)',          emoji:'🍲', cal:99,  carb:17,  prot:6.3, fat:0.4, fiber:3.9, sugar:1,   sodium:6  },
+        { name:'Roti / Chapati',        emoji:'🫓', cal:297, carb:53,  prot:11,  fat:4.4, fiber:11.4,sugar:0.5, sodium:7  },
+        { name:'Sambar',               emoji:'🍲', cal:45,  carb:6.3, prot:2.5, fat:1.5, fiber:1.8, sugar:1.2, sodium:220},
+        { name:'White Sugar',          emoji:'🍬', cal:387, carb:100, prot:0,   fat:0,   fiber:0,   sugar:100, sodium:0  },
+    ];
+
+    // ── User Helper ──────────────────────────────────────────────────────────
+    function getUserId() {
+        let userStr = localStorage.getItem('user');
+        if (!userStr) return 'default';
+        try { let u = JSON.parse(userStr); return u._id || u.email || userStr; } 
+        catch(e) { return userStr; }
+    }
+    const currentUserId = getUserId();
+
+    // ── State ─────────────────────────────────────────────────────────────────
+    function logKey() { return 'foodLog_' + currentUserId + '_' + todayKey(); }
+    let log = JSON.parse(localStorage.getItem(logKey()) || '[]');
+    let selectedFood = null;
+
+    // ── Goals from preferences ────────────────────────────────────────────────
+    const prefs = JSON.parse(localStorage.getItem('dietPrefs_' + currentUserId) || '{}');
+    const wt = parseFloat(prefs.weight) || 70;
+    const ht = parseFloat(prefs.height) || 170;
+    const act = prefs.activity || 'moderate';
+    const goal = prefs.goal || 'General Wellness';
+    const multMap = { sedentary:1.2, light:1.375, moderate:1.55, very:1.725 };
+    const bmr = 10 * wt + 6.25 * ht - 5 * 25 + 5;
+    const tdee = Math.round(bmr * (multMap[act] || 1.55));
+    const calGoal  = goal==='Weight Management' ? tdee-400 : goal==='Muscle Gain' ? tdee+300 : tdee;
+    const protGoal = Math.round(wt * (goal==='Muscle Gain'?2:1.4));
+    const carbGoal = Math.round((calGoal * 0.45) / 4);
+    const fatGoal  = Math.round((calGoal * 0.30) / 9);
+
+    // Set goal labels
+    document.getElementById('ringGoal').textContent = calGoal;
+    document.getElementById('goalCarb').textContent = carbGoal;
+    document.getElementById('goalProt').textContent = protGoal;
+    document.getElementById('goalFat').textContent  = fatGoal;
+
+    // ── Date ─────────────────────────────────────────────────────────────────
+    function todayKey() {
+        return new Date().toISOString().slice(0,10);
+    }
+    document.getElementById('logDate').textContent = new Date().toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'});
+
+    // ── Autocomplete ─────────────────────────────────────────────────────────
+    const searchEl = document.getElementById('foodSearch');
+    const acList   = document.getElementById('acList');
+
+    searchEl.addEventListener('input', () => {
+        const q = searchEl.value.toLowerCase().trim();
+        selectedFood = null;
+        document.getElementById('searchHint').style.display = 'none';
+        if (!q) { acList.classList.remove('open'); return; }
+
+        const matches = FOOD_DB.filter(f => f.name.toLowerCase().includes(q)).slice(0, 10);
+        if (!matches.length) { acList.classList.remove('open'); return; }
+
+        acList.innerHTML = matches.map((f,i) =>
+            `<div class="ac-item" data-idx="${FOOD_DB.indexOf(f)}" onclick="selectFood(${FOOD_DB.indexOf(f)})">
+                <span>${f.emoji} ${f.name}</span>
+                <span class="ac-cals">${f.cal} kcal/100g</span>
+             </div>`
+        ).join('');
+        acList.classList.add('open');
+    });
+
+    document.addEventListener('click', e => {
+        if (!e.target.closest('.autocomplete-wrap')) acList.classList.remove('open');
+    });
+
+    function selectFood(idx) {
+        selectedFood = FOOD_DB[idx];
+        searchEl.value = selectedFood.name;
+        acList.classList.remove('open');
+        document.getElementById('searchHint').style.display = 'block';
+    }
+
+    // ── Add item ─────────────────────────────────────────────────────────────
+    function addFoodItem() {
+        if (!selectedFood) {
+            searchEl.focus();
+            searchEl.style.borderColor = '#ef4444';
+            setTimeout(() => searchEl.style.borderColor = '', 1200);
+            return;
+        }
+        const qty  = parseFloat(document.getElementById('foodQty').value) || 100;
+        const unit = document.getElementById('foodUnit').value;
+        const ratio = qty / 100;
+
+        const entry = {
+            id:      Date.now(),
+            name:    selectedFood.name,
+            emoji:   selectedFood.emoji,
+            qty,
+            unit,
+            cal:     +(selectedFood.cal  * ratio).toFixed(1),
+            carb:    +(selectedFood.carb * ratio).toFixed(1),
+            prot:    +(selectedFood.prot * ratio).toFixed(1),
+            fat:     +(selectedFood.fat  * ratio).toFixed(1),
+            fiber:   +(selectedFood.fiber  * ratio).toFixed(1),
+            sugar:   +(selectedFood.sugar  * ratio).toFixed(1),
+            sodium:  +(selectedFood.sodium * ratio).toFixed(0),
+        };
+        log.push(entry);
+        saveLog();
+        renderLog();
+        updateSummary();
+
+        // Reset
+        selectedFood = null;
+        searchEl.value = '';
+        document.getElementById('foodQty').value = 100;
+        document.getElementById('searchHint').style.display = 'none';
+    }
+
+    // ── Delete ────────────────────────────────────────────────────────────────
+    function deleteItem(id) {
+        log = log.filter(e => e.id !== id);
+        saveLog(); renderLog(); updateSummary();
+    }
+
+    // ── Clear ─────────────────────────────────────────────────────────────────
+    function clearLog() {
+        if (!log.length) return;
+        if (!confirm('Clear today\'s food log?')) return;
+        log = []; saveLog(); renderLog(); updateSummary();
+    }
+
+    // ── Save ─────────────────────────────────────────────────────────────────
+    function saveLog() {
+        localStorage.setItem(logKey(), JSON.stringify(log));
+    }
+
+    // ── Render table ──────────────────────────────────────────────────────────
+    function renderLog() {
+        const body = document.getElementById('logBody');
+        const empty = document.getElementById('emptyState');
+        const wrap  = document.getElementById('logTableWrap');
+
+        if (!log.length) {
+            empty.style.display = 'block';
+            wrap.style.display  = 'none';
+            return;
+        }
+        empty.style.display = 'none';
+        wrap.style.display  = 'block';
+
+        body.innerHTML = log.map(e => `
+            <tr>
+                <td><span class="food-emoji">${e.emoji}</span><span class="food-name-cell">${e.name}</span></td>
+                <td class="food-qty-cell">${e.qty} ${e.unit}</td>
+                <td style="text-align:center;font-weight:700;color:var(--primary);">${e.cal}</td>
+                <td style="text-align:center;"><span class="macro-pill pill-carb">${e.carb}g</span></td>
+                <td style="text-align:center;"><span class="macro-pill pill-prot">${e.prot}g</span></td>
+                <td style="text-align:center;"><span class="macro-pill pill-fat">${e.fat}g</span></td>
+                <td><button class="del-btn" onclick="deleteItem(${e.id})" title="Remove"><i data-lucide="x" style="width:16px;height:16px;"></i></button></td>
+            </tr>
+        `).join('');
+
+        // Footer totals
+        const totals = log.reduce((a,e) => ({
+            cal: a.cal+e.cal, carb: a.carb+e.carb,
+            prot: a.prot+e.prot, fat: a.fat+e.fat
+        }), {cal:0,carb:0,prot:0,fat:0});
+
+        document.getElementById('totalCal').textContent  = totals.cal.toFixed(0);
+        document.getElementById('totalCarb').textContent = totals.carb.toFixed(1)+'g';
+        document.getElementById('totalProt').textContent = totals.prot.toFixed(1)+'g';
+        document.getElementById('totalFat').textContent  = totals.fat.toFixed(1)+'g';
+
+        lucide.createIcons();
+    }
+
+    // ── Summary ring + bars ───────────────────────────────────────────────────
+    function updateSummary() {
+        const totals = log.reduce((a,e) => ({
+            cal:a.cal+e.cal, carb:a.carb+e.carb, prot:a.prot+e.prot,
+            fat:a.fat+e.fat, fiber:a.fiber+e.fiber,
+            sugar:a.sugar+e.sugar, sodium:a.sodium+e.sodium
+        }), {cal:0,carb:0,prot:0,fat:0,fiber:0,sugar:0,sodium:0});
+
+        // Ring
+        const pct = Math.min(totals.cal / calGoal, 1);
+        const CIRC = 345.4;
+        document.getElementById('ringFill').style.strokeDashoffset = CIRC * (1 - pct);
+        document.getElementById('ringKcal').textContent = totals.cal.toFixed(0);
+
+        // Change ring color if over goal
+        const ringEl = document.getElementById('ringFill');
+        ringEl.style.stroke = pct >= 1 ? '#ef4444' : 'url(#ringGrad)';
+
+        // Macro text + bars
+        document.getElementById('macroCarb').innerHTML = `${totals.carb.toFixed(1)} / <span id="goalCarb">${carbGoal}</span>g`;
+        document.getElementById('macroProt').innerHTML = `${totals.prot.toFixed(1)} / <span id="goalProt">${protGoal}</span>g`;
+        document.getElementById('macroFat').innerHTML  = `${totals.fat.toFixed(1)} / <span id="goalFat">${fatGoal}</span>g`;
+
+        document.getElementById('barCarb').style.width = Math.min(totals.carb/carbGoal*100,100)+'%';
+        document.getElementById('barProt').style.width = Math.min(totals.prot/protGoal*100,100)+'%';
+        document.getElementById('barFat').style.width  = Math.min(totals.fat/fatGoal*100,100)+'%';
+
+        // Micros
+        document.getElementById('microFiber').textContent  = totals.fiber.toFixed(1)+'g';
+        document.getElementById('microSugar').textContent  = totals.sugar.toFixed(1)+'g';
+        document.getElementById('microSodium').textContent = totals.sodium.toFixed(0)+'mg';
+        document.getElementById('microItems').textContent  = log.length;
+    }
+
+    // ── Init ──────────────────────────────────────────────────────────────────
+    lucide.createIcons();
+    renderLog();
+    updateSummary();
+    </script>
+</body>
+</html>

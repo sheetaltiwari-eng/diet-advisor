@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Diet Advisor | Healthy Habits</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    
+    <!-- Main Style -->
+    <link rel="stylesheet" href="./styles/main.css">
+    
+    <style>
+        .tips-hero {
+            padding: 150px 0 80px 0;
+            text-align: center;
+        }
+
+        .tips-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-bottom: 4rem;
+        }
+
+        .tip-card {
+            padding: 2.5rem 2rem;
+            text-align: left;
+            transition: transform 0.3s ease;
+        }
+
+        .tip-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .tip-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .tip-icon i {
+            width: 24px;
+            height: 24px;
+        }
+
+        .tip-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: var(--text-main);
+        }
+
+        .tip-desc {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+        
+        /* Floating Chat Button */
+        .floating-chat {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: var(--gradient);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: var(--shadow-lg);
+            cursor: pointer;
+            z-index: 1000;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            text-decoration: none;
+        }
+
+        .floating-chat:hover {
+            transform: scale(1.1);
+            box-shadow: 0 15px 30px -5px rgba(16, 185, 129, 0.4);
+        }
+    </style>
+</head>
+<body>
+    <!-- Floating Fruit/Veg Icons Background -->
+    <div style="position: fixed; inset: 0; z-index: -1; pointer-events: none; opacity: 0.5; overflow: hidden;">
+        <!-- Floating Salad Bowls -->
+        <div class="floating-icon" style="top: 10%; left: 5%; font-size: 6rem; opacity: 0.6; animation-delay: 0s;">🥗</div>
+        <div class="floating-icon reverse" style="bottom: 10%; right: 5%; font-size: 7rem; opacity: 0.5; animation-delay: 1s;">🥗</div>
+        
+        <!-- Smaller Fruits/Veg -->
+        <div class="floating-icon reverse" style="top: 15%; right: 20%; font-size: 4rem; animation-delay: 2s;">🍎</div>
+        <div class="floating-icon" style="bottom: 30%; left: 15%; font-size: 5rem; animation-delay: 1.5s;">🥕</div>
+        <div class="floating-icon reverse" style="top: 40%; left: 25%; font-size: 4.5rem; animation-delay: 3s;">🥑</div>
+        <div class="floating-icon" style="top: 25%; left: 45%; font-size: 3rem; animation-delay: 0.5s;">🥦</div>
+        <div class="floating-icon reverse" style="bottom: 15%; right: 30%; font-size: 4rem; animation-delay: 2.5s;">🍇</div>
+        <div class="floating-icon" style="top: 60%; right: 35%; font-size: 3.5rem; animation-delay: 4s;">🍊</div>
+    </div>
+
+    <!-- Navbar -->
+    <header class="scrolled">
+        <div class="container nav-content">
+            <nav>
+                <a href="./index.html" class="logo">
+                    <div class="logo-symbol">
+                        <i data-lucide="apple"></i>
+                    </div>
+                    <span>Smart <span class="gradient-text">Diet</span></span>
+                </a>
+                
+                <div class="nav-links">
+                    <a href="./index.html#features">Features</a>
+                    <a href="./index.html#gallery">Gallery</a>
+                    <a href="./index.html#plans">Plans</a>
+                    <a href="./dashboard.html">Dashboard</a>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <div class="container tips-hero">
+        <div class="section-label" style="justify-content: center;">Knowledge Base</div>
+        <h1 class="gradient-text" style="font-size: 3.5rem; margin-bottom: 1.5rem;">Healthy Habits & Tips</h1>
+        <p class="text-muted" style="max-width: 600px; margin: 0 auto 3rem auto;">
+            Small consistent changes lead to long-term success. Explore our collection of science-backed nutrition advice, hydration principles, and daily healthy routines.
+        </p>
+    </div>
+
+    <div class="container tips-grid">
+        <!-- Habit 1 -->
+        <div class="glass-card tip-card animate-up delay-1">
+            <div class="tip-icon"><i data-lucide="droplets"></i></div>
+            <h3 class="tip-title">Master Hydration</h3>
+            <p class="tip-desc">Aim for at least 8 glasses (2 liters) of water daily. Drink a large glass immediately upon waking up to jumpstart your metabolism and digestion.</p>
+        </div>
+
+        <!-- Habit 2 -->
+        <div class="glass-card tip-card animate-up delay-2">
+            <div class="tip-icon"><i data-lucide="clock"></i></div>
+            <h3 class="tip-title">Balanced Meal Timing</h3>
+            <p class="tip-desc">Try to eat meals at similar times every day. Aim to finish dinner at least 2-3 hours before bed to improve sleep quality and fat burning.</p>
+        </div>
+
+        <!-- Habit 3 -->
+        <div class="glass-card tip-card animate-up delay-3">
+            <div class="tip-icon"><i data-lucide="leaf"></i></div>
+            <h3 class="tip-title">Whole Foods First</h3>
+            <p class="tip-desc">Base 80% of your diet on minimally processed, single-ingredient whole foods. They keep you fuller for longer and naturally restrict calorie overconsumption.</p>
+        </div>
+
+        <!-- Habit 4 -->
+        <div class="glass-card tip-card animate-up delay-1">
+            <div class="tip-icon"><i data-lucide="moon"></i></div>
+            <h3 class="tip-title">Prioritize Deep Sleep</h3>
+            <p class="tip-desc">7-8 hours of quality sleep manages hunger hormones (Ghrelin & Leptin). Poor sleep is heavily linked to weight gain and uncontrollable cravings.</p>
+        </div>
+
+        <!-- Habit 5 -->
+        <div class="glass-card tip-card animate-up delay-2">
+            <div class="tip-icon"><i data-lucide="flame"></i></div>
+            <h3 class="tip-title">Protein at Every Meal</h3>
+            <p class="tip-desc">Include a protein source (eggs, meat, tofu, lentils) in every single meal. Protein preserves muscle mass and requires more calories to digest than fat or carbs.</p>
+        </div>
+
+        <!-- Habit 6 -->
+        <div class="glass-card tip-card animate-up delay-3">
+            <div class="tip-icon"><i data-lucide="activity"></i></div>
+            <h3 class="tip-title">Non-Exercise Activity</h3>
+            <p class="tip-desc">NEAT (Non-Exercise Activity Thermogenesis) like walking, taking stairs, or standing up frequently, burns significantly more calories throughout the day than a single workout.</p>
+        </div>
+    </div>
+
+    <!-- Floating Chat Link -->
+    <a href="./chat.html" class="floating-chat" title="Chat with an Expert">
+        <i data-lucide="message-square"></i>
+    </a>
+
+    <!-- Footer -->
+    <footer style="padding: 4rem 0; text-align: center; border-top: 1px solid var(--glass-border);">
+        <div class="container">
+            <a href="./index.html" class="logo" style="justify-content: center; margin-bottom: 1.5rem;">
+                <div class="logo-symbol">
+                    <i data-lucide="apple"></i>
+                </div>
+                <span>Smart <span class="gradient-text">Diet</span></span>
+            </a>
+            <p class="text-muted" style="max-width: 500px; margin: 0 auto 2rem auto;">
+                Improving awareness of nutrition for better health outcomes through efficient data management and user-friendly interaction.
+            </p>
+            <div class="nav-links" style="justify-content: center; margin-bottom: 2rem;">
+                <a href="#">About</a>
+                <a href="#">Privacy</a>
+                <a href="#">Terms</a>
+                <a href="#">Contact</a>
+            </div>
+            <p class="text-muted" style="font-size: 0.8rem;">&copy; 2026 Smart Diet Advisor. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        lucide.createIcons();
+    </script>
+</body>
+</html>

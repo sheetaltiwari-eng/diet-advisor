@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Diet Advisor | Sign In</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <!-- Main Style -->
+    <link rel="stylesheet" href="./styles/main.css">
+
+    <style>
+        .login-page {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding-top: 100px;
+        }
+
+        .login-card {
+            width: 100%;
+            max-width: 450px;
+            padding: 3rem;
+            text-align: center;
+        }
+
+        .login-logo {
+            width: 60px;
+            height: 60px;
+            border-radius: 12px;
+            background: var(--gradient);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.5rem;
+            color: white;
+        }
+
+        .form-group {
+            text-align: left;
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .input-field {
+            width: 100%;
+            padding: 1rem 1.25rem;
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.7);
+            border: 1px solid var(--glass-border);
+            color: var(--text-main);
+            font-family: inherit;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .input-field:focus {
+            outline: none;
+            border-color: var(--primary);
+            background: rgba(255, 255, 255, 0.9);
+            box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.2);
+        }
+
+        .btn-block {
+            width: 100%;
+            margin-top: 1rem;
+        }
+
+        .footer-link {
+            display: block;
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--glass-border);
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        .footer-link a {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 600;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Floating Fruit/Veg Icons Background -->
+    <div style="position: fixed; inset: 0; z-index: -1; pointer-events: none; opacity: 0.5; overflow: hidden;">
+        <!-- Floating Salad Bowls -->
+        <div class="floating-icon" style="top: 10%; left: 5%; font-size: 6rem; opacity: 0.6; animation-delay: 0s;">🥗
+        </div>
+        <div class="floating-icon reverse"
+            style="bottom: 10%; right: 5%; font-size: 7rem; opacity: 0.5; animation-delay: 1s;">🥗</div>
+
+        <!-- Smaller Fruits/Veg -->
+        <div class="floating-icon reverse" style="top: 15%; right: 20%; font-size: 4rem; animation-delay: 2s;">🍎</div>
+        <div class="floating-icon" style="bottom: 30%; left: 15%; font-size: 5rem; animation-delay: 1.5s;">🥕</div>
+        <div class="floating-icon reverse" style="top: 40%; left: 25%; font-size: 4.5rem; animation-delay: 3s;">🥑</div>
+        <div class="floating-icon" style="top: 25%; left: 45%; font-size: 3rem; animation-delay: 0.5s;">🥦</div>
+        <div class="floating-icon reverse" style="bottom: 15%; right: 30%; font-size: 4rem; animation-delay: 2.5s;">🍇
+        </div>
+        <div class="floating-icon" style="top: 60%; right: 35%; font-size: 3.5rem; animation-delay: 4s;">🍊</div>
+    </div>
+
+    <header>
+        <div class="container nav-content">
+            <nav>
+                <a href="./index.html" class="logo">
+                    <div class="logo-symbol">
+                        <i data-lucide="apple"></i>
+                    </div>
+                </a>
+                <a href="./index.html" class="btn btn-secondary btn-sm">Back to Home</a>
+            </nav>
+        </div>
+    </header>
+
+    <div class="login-page container">
+        <div class="glass-card login-card animate-up">
+            <div class="login-logo">
+                <i data-lucide="apple"></i>
+            </div>
+            <h1>Welcome back</h1>
+            <p class="text-muted" style="margin-bottom: 2rem;">Sign in to your health portal</p>
+
+            <form action="./dashboard.html">
+                <div class="form-group">
+                    <label for="email">Email Address</label>
+                    <input type="email" id="email" class="input-field" placeholder="name@example.com" required>
+                </div>
+
+                <div class="form-group">
+                    <div style="display: flex; justify-content: space-between;">
+                        <label for="password">Password</label>
+                        <a href="#" style="font-size: 0.8rem; color: var(--primary); text-decoration: none;">Forgot?</a>
+                    </div>
+                    <input type="password" id="password" class="input-field" placeholder="••••••••" required>
+                </div>
+
+                <div class="form-group" style="display: flex; align-items: center; gap: 0.5rem; margin-top: -0.5rem;">
+                    <input type="checkbox" id="remember">
+                    <label for="remember" style="margin-bottom: 0; cursor: pointer;">Remember me</label>
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-block">
+                    Sign In <i data-lucide="log-in"></i>
+                </button>
+            </form>
+
+            <div class="footer-link">
+                Don't have an account? <a href="./register.html">Create free</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer style="padding: 4rem 0; text-align: center; border-top: 1px solid var(--glass-border);">
+        <div class="container">
+            <a href="./index.html" class="logo" style="justify-content: center; margin-bottom: 1.5rem;">
+                <div class="logo-symbol">
+                    <i data-lucide="apple"></i>
+                </div>
+                <span>Smart <span class="gradient-text">Diet</span></span>
+            </a>
+            <p class="text-muted" style="max-width: 500px; margin: 0 auto 2rem auto;">
+                Improving awareness of nutrition for better health outcomes through efficient data management and
+                user-friendly interaction.
+            </p>
+            <div class="nav-links" style="justify-content: center; margin-bottom: 2rem;">
+                <a href="#">About</a>
+                <a href="#">Privacy</a>
+                <a href="#">Terms</a>
+                <a href="#">Contact</a>
+            </div>
+            <p class="text-muted" style="font-size: 0.8rem;">&copy; 2026 Smart Diet Advisor. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        lucide.createIcons();
+
+        const loginForm = document.querySelector('form');
+        const emailInput = document.getElementById('email');
+        const passwordInput = document.getElementById('password');
+        const submitBtn = loginForm.querySelector('button[type="submit"]');
+
+        loginForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            // UI State: Loading
+            const originalBtnText = submitBtn.innerHTML;
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = 'Signing in... <i data-lucide="loader" class="animate-spin"></i>';
+            lucide.createIcons();
+
+            const loginData = {
+                email: emailInput.value,
+                password: passwordInput.value
+            };
+
+            if (loginData.password.length !== 6) {
+                const errorMsg = document.createElement('div');
+                errorMsg.className = 'error-message';
+                errorMsg.style.background = 'rgba(239, 68, 68, 0.1)';
+                errorMsg.style.color = '#ef4444';
+                errorMsg.style.padding = '1rem';
+                errorMsg.style.borderRadius = '12px';
+                errorMsg.style.marginTop = '1rem';
+                errorMsg.style.fontSize = '0.9rem';
+                errorMsg.style.borderLeft = '4px solid #ef4444';
+                errorMsg.style.textAlign = 'left';
+                errorMsg.innerHTML = `<i data-lucide="alert-circle" style="vertical-align: middle; width: 16px; margin-right: 8px;"></i> Password should be only 6 digits`;
+
+                const existingError = loginForm.querySelector('.error-message');
+                if (existingError) existingError.remove();
+
+                loginForm.appendChild(errorMsg);
+                lucide.createIcons();
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = originalBtnText;
+                return;
+            }
+
+            try {
+                const response = await fetch('http://localhost:5000/api/auth/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(loginData)
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(data.message || 'Login failed');
+                }
+
+                // Success: Store user info and token
+                localStorage.setItem('user', JSON.stringify(data));
+                localStorage.setItem('token', data.token);
+
+                // Show success status
+                submitBtn.classList.remove('btn-primary');
+                submitBtn.classList.add('btn-success');
+                submitBtn.innerHTML = 'Success! Redirecting... <i data-lucide="check"></i>';
+                lucide.createIcons();
+
+                // Redirect
+                setTimeout(() => {
+                    window.location.href = './dashboard.html';
+                }, 1000);
+
+            } catch (error) {
+                console.error('Login error:', error);
+                
+                let message = error.message;
+                if (error.name === 'TypeError' || message.includes('fetch') || message.includes('NetworkError')) {
+                    message = 'Cannot connect to server. Please ensure the backend (port 5000) is running.';
+                }
+
+                // Show error state
+                const errorMsg = document.createElement('div');
+                errorMsg.className = 'error-message';
+                errorMsg.style.background = 'rgba(239, 68, 68, 0.1)';
+                errorMsg.style.color = '#ef4444';
+                errorMsg.style.padding = '1rem';
+                errorMsg.style.borderRadius = '12px';
+                errorMsg.style.marginTop = '1rem';
+                errorMsg.style.fontSize = '0.9rem';
+                errorMsg.style.borderLeft = '4px solid #ef4444';
+                errorMsg.style.textAlign = 'left';
+                errorMsg.innerHTML = `<i data-lucide="alert-circle" style="vertical-align: middle; width: 16px; margin-right: 8px;"></i> ${message}`;
+
+                // Remove previous error if exists
+                const existingError = loginForm.querySelector('.error-message');
+                if (existingError) existingError.remove();
+
+                loginForm.appendChild(errorMsg);
+                lucide.createIcons();
+
+                // Reset button
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = originalBtnText;
+                lucide.createIcons();
+            }
+        });
+    </script>
+</body>
+
+</html>
